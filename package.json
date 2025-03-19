@@ -1,0 +1,41 @@
+{
+  "name": "snodeb",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "debian": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "lint": "biome check src/",
+    "lint:fix": "biome check src/ --fix",
+    "format": "biome format src/",
+    "format:fix": "biome format src/ --fix"
+  },
+  "author": "Sonel",
+  "license": "ISC",
+  "description": "A pure JavaScript/TypeScript tool for creating Debian packages",
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "clean": true,
+    "minify": true,
+    "format": [
+      "esm"
+    ],
+    "target": "node20",
+    "sourcemap": true
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/tar": "^6.1.13",
+    "tsup": "^8.4.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "tar": "^6.2.0",
+    "type-fest": "^4.37.0"
+  }
+}
