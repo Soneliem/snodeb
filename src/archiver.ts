@@ -2,16 +2,10 @@ import { mkdir, writeFile, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import tar from "tar";
-import type { BuildConfig } from "./types.js";
+import type { BuildConfig, BuildOptions } from "./types.js";
 
 // Get the directory path for the templates
-const templateDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "templates");
-
-interface BuildOptions {
-  sourceDir: string;
-  outputDir: string;
-  config: BuildConfig;
-}
+const templateDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "public", "templates");
 
 export class DebArchiver {
   private config: BuildConfig;
@@ -39,7 +33,7 @@ export class DebArchiver {
       control.push(`Depends: ${this.config.depends.join(", ")}`);
     }
 
-    await writeFile(path.join(this.tempDir, "control"), `${control.join("\n")}\n`);
+    await writeFile(path.join(this.tempDir, "control"), `${control.join("\n")}\n\n`);
   }
 
   private async createDataArchive(): Promise<Buffer> {
@@ -52,15 +46,19 @@ export class DebArchiver {
         file: dataPath,
         cwd: this.sourceDir,
         filter: (filePath) => {
+          console.log(`Processing file: ${filePath}`);
           // Skip excluded files
-          return !this.config.files.exclude.some((pattern) => {
+          const isExcluded = this.config.files.exclude.some((pattern) => {
             try {
               const regex = new RegExp(pattern.replace(/\*/g, ".*"));
-              return regex.test(filePath);
+              const matches = regex.test(filePath);
+              if (matches) console.log(`Excluding file: ${filePath} (matched pattern: ${pattern})`);
+              return matches;
             } catch {
               return filePath.includes(pattern);
             }
           });
+          return !isExcluded;
         },
         portable: true,
         prefix: this.config.files.installPath,
@@ -90,6 +88,7 @@ export class DebArchiver {
   private async createSystemdService(): Promise<void> {
     if (!this.config.systemd.enable) return;
 
+    console.log(`Creating systemd service for ${this.config.name}...`);
     const templatePath = path.join(templateDir, "systemd.service");
     let serviceTemplate = await readFile(templatePath, "utf-8");
 
@@ -111,15 +110,19 @@ export class DebArchiver {
   }
 
   public async build(): Promise<string> {
+    console.log(`Starting build for ${this.config.name} v${this.config.version}...`);
     await mkdir(this.tempDir, { recursive: true });
     await mkdir(this.outputDir, { recursive: true });
 
     // Create debian-binary file
+    console.log("Creating debian-binary file...");
     await writeFile(path.join(this.tempDir, "debian-binary"), "2.0\n");
 
     // Create control file and systemd service if enabled
+    console.log("Creating control file...");
     await this.createControlFile();
     await this.createSystemdService();
+    console.log("Creating data archives...");
 
     // Create archives
     const [debianBinary, control, data] = await Promise.all([
@@ -130,6 +133,7 @@ export class DebArchiver {
 
     // Create final .deb file
     const outputFile = path.join(this.outputDir, `${this.config.name}_${this.config.version}.deb`);
+    console.log(`Creating final .deb package at: ${outputFile}`);
 
     // Create ar archive
     const arBuffer = Buffer.concat([
@@ -140,6 +144,7 @@ export class DebArchiver {
     ]);
 
     await writeFile(outputFile, arBuffer);
+    console.log("Build completed successfully!");
     return outputFile;
   }
 

@@ -23,3 +23,9 @@ export interface BuildConfig {
 export type PackageJsonCustom = PackageJson & {
   debConfig: BuildConfig;
 };
+
+export interface BuildOptions {
+  sourceDir: string;
+  outputDir: string;
+  config: BuildConfig;
+}

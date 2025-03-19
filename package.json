@@ -4,10 +4,11 @@
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "debian": "./dist/index.js"
+    "snodeb": "dist/index.js"
   },
   "scripts": {
     "build": "tsup",
+    "watch": "tsup --watch",
     "lint": "biome check src/",
     "lint:fix": "biome check src/ --fix",
     "format": "biome format src/",
@@ -25,8 +26,7 @@
     "format": [
       "esm"
     ],
-    "target": "node20",
-    "sourcemap": true
+    "publicDir": true
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
