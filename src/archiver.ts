@@ -86,8 +86,6 @@ export class DebArchiver {
   }
 
   private async createSystemdService(): Promise<void> {
-    if (!this.config.systemd.enable) return;
-
     console.log(`Creating systemd service for ${this.config.name}...`);
     const templatePath = path.join(templateDir, "systemd.service");
     let serviceTemplate = await readFile(templatePath, "utf-8");
@@ -121,7 +119,7 @@ export class DebArchiver {
     // Create control file and systemd service if enabled
     console.log("Creating control file...");
     await this.createControlFile();
-    await this.createSystemdService();
+    if (this.config.systemd.enable) await this.createSystemdService();
     console.log("Creating data archives...");
 
     // Create archives
@@ -153,12 +151,12 @@ export class DebArchiver {
     const timestamp = Math.floor(Date.now() / 1000);
 
     header.write(name.padEnd(16, " ")); // File name
-    header.write(timestamp.toString(), 16); // Timestamp
-    header.write("0     ", 28); // Owner ID
-    header.write("0     ", 34); // Group ID
-    header.write("100644  ", 40); // File mode
-    header.write(content.length.toString(), 48); // File size
-    header.write("`\n", 58); // End of header
+    header.write(timestamp.toString().padEnd(12, " "), 16); // Timestamp
+    header.write("0".padEnd(6, " "), 28); // Owner ID
+    header.write("0".padEnd(6, " "), 34); // Group ID
+    header.write("100644".padEnd(8, " "), 40); // File mode
+    header.write(content.length.toString().padEnd(10, " "), 48); // File size
+    header.write("`\n", 58, "ascii"); // End of header marker (grave accent + newline) in ASCII
 
     return Buffer.concat([header, content, content.length % 2 ? Buffer.from("\n") : Buffer.alloc(0)]);
   }
