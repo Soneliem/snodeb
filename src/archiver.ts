@@ -1,7 +1,7 @@
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import tar from "tar";
+import { create } from "tar";
 import type { BuildConfig, BuildOptions } from "./types.js";
 
 // Get the directory path for the templates
@@ -38,32 +38,39 @@ export class DebArchiver {
 
   private async createDataArchive(): Promise<Buffer> {
     const dataPath = path.join(this.tempDir, "data.tar.gz");
+    const installDir = path.join(this.tempDir, "install");
 
-    // Create tar archive with all matched files
-    await tar.create(
+    // Create temporary installation directory structure
+    await mkdir(path.join(installDir, this.config.files.installPath), { recursive: true });
+
+    // Copy files to temporary directory with correct structure
+    for (const file of this.config.files.include) {
+      const sourcePath = path.join(this.sourceDir, file);
+      const targetPath = path.join(installDir, this.config.files.installPath, file);
+      await mkdir(path.dirname(targetPath), { recursive: true });
+      await writeFile(targetPath, await readFile(sourcePath));
+    }
+
+    // Add systemd service if enabled
+    if (this.config.systemd.enable) {
+      const systemdPath = path.join(installDir, "lib/systemd/system");
+      await mkdir(systemdPath, { recursive: true });
+      await writeFile(
+        path.join(systemdPath, `${this.config.name}.service`),
+        await readFile(path.join(this.tempDir, `${this.config.name}.service`)),
+      );
+    }
+
+    // Create tar archive with proper directory structure
+    await create(
       {
         gzip: true,
         file: dataPath,
-        cwd: this.sourceDir,
-        filter: (filePath) => {
-          console.log(`Processing file: ${filePath}`);
-          // Skip excluded files
-          const isExcluded = this.config.files.exclude.some((pattern) => {
-            try {
-              const regex = new RegExp(pattern.replace(/\*/g, ".*"));
-              const matches = regex.test(filePath);
-              if (matches) console.log(`Excluding file: ${filePath} (matched pattern: ${pattern})`);
-              return matches;
-            } catch {
-              return filePath.includes(pattern);
-            }
-          });
-          return !isExcluded;
-        },
+        cwd: installDir,
         portable: true,
-        prefix: this.config.files.installPath,
+        follow: true,
       },
-      this.config.files.include,
+      ["."],
     );
 
     return await readFile(dataPath);
@@ -72,12 +79,12 @@ export class DebArchiver {
   private async createControlArchive(): Promise<Buffer> {
     const controlPath = path.join(this.tempDir, "control.tar.gz");
 
-    await tar.create(
+    await create(
       {
         gzip: true,
         file: controlPath,
-        cwd: path.join(this.tempDir),
-        prefix: ".",
+        cwd: this.tempDir,
+        portable: true,
       },
       ["control"],
     );
@@ -93,7 +100,8 @@ export class DebArchiver {
     const replacements = {
       description: this.config.description,
       user: this.config.systemd.user,
-      main: path.join(this.config.files.installPath, this.config.main),
+      group: this.config.systemd.group,
+      main: path.posix.join(this.config.files.installPath, this.config.main).replace(/^\//g, ""),
       workingDirectory: this.config.files.installPath,
       restart: this.config.systemd.restart,
       name: this.config.name,

@@ -36,11 +36,12 @@ async function main() {
       files: {
         include: packageJson.debConfig.files?.include || (packageJson.main ? [packageJson.main] : ["index.js"]),
         exclude: packageJson.debConfig.files?.exclude || [],
-        installPath: packageJson.debConfig.files?.installPath || `/usr/lib/${packageJson.name}`,
+        installPath: packageJson.debConfig.files?.installPath || `/usr/share/${packageJson.name}`,
       },
       systemd: {
         enable: packageJson.debConfig.systemd?.enable || true,
         user: packageJson.debConfig.systemd?.user || "root",
+        group: packageJson.debConfig.systemd?.group || "root",
         restart: packageJson.debConfig.systemd?.restart || "always",
       },
     };

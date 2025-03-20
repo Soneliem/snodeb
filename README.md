@@ -1,19 +1,19 @@
 # SNODEB
 
+Sonel's Node Debian Builder
+
 A pure JavaScript/TypeScript tool for creating Debian packages (.deb) from Node.js applications.
 
 ## Features
 
 - Pure JavaScript implementation (no system dependencies)
-- TypeScript support
 - Configurable file inclusion/exclusion
 - Systemd service generation
-- Customizable installation paths
 
 ## Installation
 
 ```bash
-npm install --global snodeb
+npm install -d snodeb
 ```
 
 ## Usage
@@ -60,7 +60,7 @@ The following are all configuration options available
 | ----------------------------- | -------- | -------- | ---------------------- | -------------------------------------------- |
 | `name`                        | Yes      | string   | Package Name           |                                              |
 | `version`                     | Yes      | string   | Package Version        |                                              |
-| `debConfig.maintainer`        | No       | string   | Package maintainer     | Value from package.json author or "Unknown"  |
+| `debConfig.maintainer`        | No       | string   | Package maintainer     | "Unknown"                                    |
 | `debConfig.architecture`      | No       | string   | Target architecture    | "all"                                        |
 | `debConfig.depends`           | No       | string[] | Package dependencies   | ["nodejs"]                                   |
 | `debConfig.files.include`     | No       | string[] | Files to include       | [value of package.json "main" or "index.js"] |

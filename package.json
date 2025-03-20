@@ -35,7 +35,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "tar": "^6.2.0",
+    "tar": "^7.4.3",
     "type-fest": "^4.37.0"
   }
 }

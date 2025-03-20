@@ -11,6 +11,7 @@ export interface BuildConfig {
   systemd: {
     enable: boolean;
     user: string;
+    group: string;
     restart: "always" | "on-failure" | "no";
   };
   files: {
