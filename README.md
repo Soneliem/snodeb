@@ -26,7 +26,7 @@ npm install -D snodeb
   "version": "1.0.0",
   "description": "Your application",
   "main": "dist/index.js",
-  "debConfig": {
+  "debConfig": { 
     "maintainer": "Your Name <email@example.com>",
     "architecture": "all",
     "depends": ["nodejs", "mosquitto"],

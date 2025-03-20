@@ -1,6 +1,6 @@
 {
   "name": "snodeb",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
@@ -15,7 +15,7 @@
     "format:fix": "biome format src/ --fix"
   },
   "author": "Sonel",
-  "license": "ISC",
+  "license": "MIT",
   "description": "A pure JavaScript/TypeScript tool for creating Debian packages",
   "tsup": {
     "entry": [
