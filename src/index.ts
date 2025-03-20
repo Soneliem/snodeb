@@ -29,7 +29,6 @@ async function main() {
       name: packageJson.name,
       version: packageJson.version,
       description: packageJson.description || "",
-      main: packageJson.main || "",
       maintainer: packageJson.debConfig.maintainer || "Unknown",
       architecture: packageJson.debConfig.architecture || "all",
       depends: packageJson.debConfig.depends || ["nodejs"],
@@ -42,7 +41,10 @@ async function main() {
         enable: packageJson.debConfig.systemd?.enable || true,
         user: packageJson.debConfig.systemd?.user || "root",
         group: packageJson.debConfig.systemd?.group || "root",
+        mainEntry: packageJson.debConfig.systemd?.mainEntry || packageJson.main || "index.js",
         restart: packageJson.debConfig.systemd?.restart || "always",
+        enableService: packageJson.debConfig.systemd?.enableService ?? true,
+        startService: packageJson.debConfig.systemd?.startService ?? true,
       },
     };
 

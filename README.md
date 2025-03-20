@@ -13,7 +13,7 @@ A pure JavaScript/TypeScript tool for creating Debian packages (.deb) from Node.
 ## Installation
 
 ```bash
-npm install -d snodeb
+npm install -D snodeb
 ```
 
 ## Usage
@@ -47,7 +47,7 @@ npm install -d snodeb
 2. Run the packaging tool:
 
 ```bash
-debian
+snodeb
 ```
 
 The tool will create a .deb package in the `deb` directory.
@@ -56,19 +56,23 @@ The tool will create a .deb package in the `deb` directory.
 
 The following are all configuration options available
 
-| Option                        | Required | Type     | Description            | Default                                      |
-| ----------------------------- | -------- | -------- | ---------------------- | -------------------------------------------- |
-| `name`                        | Yes      | string   | Package Name           |                                              |
-| `version`                     | Yes      | string   | Package Version        |                                              |
-| `debConfig.maintainer`        | No       | string   | Package maintainer     | "Unknown"                                    |
-| `debConfig.architecture`      | No       | string   | Target architecture    | "all"                                        |
-| `debConfig.depends`           | No       | string[] | Package dependencies   | ["nodejs"]                                   |
-| `debConfig.files.include`     | No       | string[] | Files to include       | [value of package.json "main" or "index.js"] |
-| `debConfig.files.exclude`     | No       | string[] | Files to exclude       | []                                           |
-| `debConfig.files.installPath` | No       | string   | Installation directory | "/usr/lib/${name}"                           |
-| `debConfig.systemd.enable`    | No       | boolean  | Enable systemd service | true                                         |
-| `debConfig.systemd.user`      | No       | string   | Service user           | "root"                                       |
-| `debConfig.systemd.restart`   | No       | string   | Restart policy         | "always"                                     |
+| Option                            | Required | Type     | Description                       | Default                                      |
+| --------------------------------- | -------- | -------- | --------------------------------- | -------------------------------------------- |
+| `name`                            | Yes      | string   | Package Name                      |                                              |
+| `version`                         | Yes      | string   | Package Version                   |                                              |
+| `debConfig.maintainer`            | No       | string   | Package maintainer                | "Unknown"                                    |
+| `debConfig.architecture`          | No       | string   | Target architecture               | "all"                                        |
+| `debConfig.depends`               | No       | string[] | Package dependencies              | ["nodejs"]                                   |
+| `debConfig.files.include`         | No       | string[] | Files to include                  | [value of package.json "main" or "index.js"] |
+| `debConfig.files.exclude`         | No       | string[] | Files to exclude                  | []                                           |
+| `debConfig.files.installPath`     | No       | string   | Installation directory            | "/usr/share/${name}"                         |
+| `debConfig.systemd.enable`        | No       | boolean  | Enable systemd service generation | true                                         |
+| `debConfig.systemd.user`          | No       | string   | Service user                      | "root"                                       |
+| `debConfig.systemd.group`         | No       | string   | Service group                     | "root"                                       |
+| `debConfig.systemd.mainEntry`     | No       | string   | Main Entry Point                  | value of package.json "main" or "index.js"   |
+| `debConfig.systemd.restart`       | No       | string   | Restart policy                    | "always"                                     |
+| `debConfig.systemd.enableService` | No       | boolean  | Enable service after install      | true                                         |
+| `debConfig.systemd.startService`  | No       | boolean  | Start service after install       | true                                         |
 
 ### File Patterns
 
@@ -80,12 +84,31 @@ The following are all configuration options available
 
 ### Systemd Service
 
-When systemd integration is enabled:
+When systemd integration is enabled (default: true), a systemd service file is created with the following configuration:
 
-- Creates a service file
-- Uses the specified user
-- Configures working directory to installPath
-- Supports restart policies: "always", "on-failure", "no"
+- Service user (default: root)
+- Service group (default: root)
+- Working directory set to installPath
+- Main entry point (default: package.json main or index.js)
+- Restart policy (default: always)
+  - Supported values: "always", "on-failure", "no"
+
+The service is configured to automatically run your Node.js application with appropriate permissions and restart behavior. After package installation:
+
+- enableService (default: true): Controls whether the systemd service is automatically enabled
+- startService (default: true): Controls whether the systemd service is automatically started
+
+### Package Updates
+
+When updating an existing installation:
+
+1. The current service state (enabled/active) is preserved
+2. The service is automatically stopped during the update if it was running
+3. After the update:
+   - The service remains enabled if it was previously enabled or if enableService=true
+   - The service is restarted if it was previously running or if startService=true
+
+This ensures safe updates while respecting both the package configuration and the system's current service state.
 
 ## Contributing
 

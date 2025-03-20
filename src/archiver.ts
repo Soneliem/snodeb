@@ -1,4 +1,4 @@
-import { mkdir, writeFile, readFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { create } from "tar";
@@ -86,7 +86,7 @@ export class DebArchiver {
         cwd: this.tempDir,
         portable: true,
       },
-      ["control"],
+      ["control", ...(this.config.systemd.enable ? ["postinst"] : [])],
     );
 
     return await readFile(controlPath);
@@ -97,26 +97,44 @@ export class DebArchiver {
     const templatePath = path.join(templateDir, "systemd.service");
     let serviceTemplate = await readFile(templatePath, "utf-8");
 
-    const replacements = {
+    const serviceFileReplacements = {
       description: this.config.description,
       user: this.config.systemd.user,
       group: this.config.systemd.group,
-      main: path.posix.join(this.config.files.installPath, this.config.main).replace(/^\//g, ""),
+      mainEntry: path.posix.join(this.config.files.installPath, this.config.systemd.mainEntry).replace(/^\//g, ""),
       workingDirectory: this.config.files.installPath,
       restart: this.config.systemd.restart,
       name: this.config.name,
     };
 
-    for (const [key, value] of Object.entries(replacements)) {
+    for (const [key, value] of Object.entries(serviceFileReplacements)) {
       serviceTemplate = serviceTemplate.replace(new RegExp(`{{${key}}}`, "g"), value);
     }
 
     const servicePath = path.join(this.tempDir, `${this.config.name}.service`);
     await writeFile(servicePath, serviceTemplate);
+
+    // Create postinst script for enabling and starting the service
+    const postinstPath = path.join(this.tempDir, "postinst");
+    const postinstTemplatePath = path.join(templateDir, "postinst.sh");
+    let postinstTemplate = await readFile(postinstTemplatePath, "utf-8");
+
+    const postInstReplacements = {
+      name: this.config.name,
+      enableService: this.config.systemd.enableService.toString(),
+      startService: this.config.systemd.startService.toString(),
+    };
+
+    for (const [key, value] of Object.entries(postInstReplacements)) {
+      postinstTemplate = postinstTemplate.replace(new RegExp(`{{${key}}}`, "g"), value);
+    }
+
+    await writeFile(postinstPath, postinstTemplate, { mode: 0o755 });
   }
 
   public async build(): Promise<string> {
     console.log(`Starting build for ${this.config.name} v${this.config.version}...`);
+    await rm(this.tempDir, { recursive: true, force: true });
     await mkdir(this.tempDir, { recursive: true });
     await mkdir(this.outputDir, { recursive: true });
 

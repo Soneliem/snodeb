@@ -4,7 +4,6 @@ export interface BuildConfig {
   name: string;
   version: string;
   description: string;
-  main: string;
   maintainer: string;
   architecture: string;
   depends: string[];
@@ -12,7 +11,10 @@ export interface BuildConfig {
     enable: boolean;
     user: string;
     group: string;
+    mainEntry: string;
     restart: "always" | "on-failure" | "no";
+    enableService: boolean;
+    startService: boolean;
   };
   files: {
     include: string[];
