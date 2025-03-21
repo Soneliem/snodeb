@@ -43,6 +43,7 @@ async function main() {
         group: packageJson.debConfig.systemd?.group || "root",
         entryPoint: packageJson.debConfig.systemd?.entryPoint || packageJson.main || "index.js",
         restart: packageJson.debConfig.systemd?.restart || "always",
+        restartSec: packageJson.debConfig.systemd?.restartSec || 10,
         enableService: packageJson.debConfig.systemd?.enableService ?? true,
         startService: packageJson.debConfig.systemd?.startService ?? true,
       },

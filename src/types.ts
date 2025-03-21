@@ -13,6 +13,7 @@ export interface BuildConfig {
     group: string;
     entryPoint: string;
     restart: "always" | "on-failure" | "no";
+    restartSec: number;
     enableService: boolean;
     startService: boolean;
   };

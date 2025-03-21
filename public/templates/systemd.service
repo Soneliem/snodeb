@@ -6,14 +6,12 @@ After=network.target
 Type=simple
 User={{user}}
 Group={{group}}
-ExecStart=/usr/bin/node /{{main}}
+ExecStart=/usr/bin/node /{{entryPoint}}
 WorkingDirectory={{workingDirectory}}
 Restart={{restart}}
-RestartSec=10
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier={{name}}
+RestartSec={{restartSec}}
 Environment=NODE_ENV=production
+PermissionsStartOnly=true
 
 [Install]
 WantedBy=multi-user.target

@@ -28,6 +28,7 @@ export class DebArchiver {
       `Architecture: ${this.config.architecture}`,
       `Maintainer: ${this.config.maintainer}`,
       `Description: ${this.config.description}`,
+      `Depends: ${this.config.depends.join(", ")}`,
     ];
 
     if (this.config.depends.length) {
@@ -96,7 +97,7 @@ export class DebArchiver {
         cwd: this.tempDir,
         portable: true,
       },
-      ["control", ...(this.config.systemd.enable ? ["postinst"] : [])],
+      ["control", ...(this.config.systemd.enable ? ["postinst", "prerm"] : [])],
     );
 
     return await readFile(controlPath);
@@ -114,7 +115,7 @@ export class DebArchiver {
       entryPoint: path.posix.join(this.config.files.installPath, this.config.systemd.entryPoint).replace(/^\//g, ""),
       workingDirectory: this.config.files.installPath,
       restart: this.config.systemd.restart,
-      name: this.config.name,
+      restartSec: this.config.systemd.restartSec.toString(),
     };
 
     for (const [key, value] of Object.entries(serviceFileReplacements)) {
@@ -131,6 +132,8 @@ export class DebArchiver {
 
     const postInstReplacements = {
       name: this.config.name,
+      user: this.config.systemd.user,
+      group: this.config.systemd.group,
       enableService: this.config.systemd.enableService.toString(),
       startService: this.config.systemd.startService.toString(),
     };
@@ -140,6 +143,21 @@ export class DebArchiver {
     }
 
     await writeFile(postinstPath, postinstTemplate, { mode: 0o755 });
+
+    // Create prerm script for cleanup before package removal
+    const prermPath = path.join(this.tempDir, "prerm");
+    const prermTemplatePath = path.join(templateDir, "prerm.sh");
+    let prermTemplate = await readFile(prermTemplatePath, "utf-8");
+
+    const prermReplacements = {
+      name: this.config.name,
+    };
+
+    for (const [key, value] of Object.entries(prermReplacements)) {
+      prermTemplate = prermTemplate.replace(new RegExp(`{{${key}}}`, "g"), value);
+    }
+
+    await writeFile(prermPath, prermTemplate, { mode: 0o755 });
   }
 
   public async build(): Promise<string> {

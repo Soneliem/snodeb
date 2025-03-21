@@ -1,6 +1,20 @@
 #!/bin/sh
 set -e
 
+# Create group if it doesn't exist
+if ! getent group {{group}} >/dev/null; then
+    groupadd --system {{group}}
+fi
+
+# Create user if it doesn't exist
+if ! getent passwd {{user}} >/dev/null; then
+    useradd --system \
+        --gid {{group}} \
+        --no-create-home \
+        --shell /usr/sbin/nologin \
+        {{user}}
+fi
+
 # Function to check if service is enabled
 is_enabled() {
     systemctl is-enabled {{name}}.service >/dev/null 2>&1 || false

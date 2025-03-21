@@ -4,6 +4,8 @@ Sonel's Node Debian Builder
 
 A pure JavaScript/TypeScript tool for creating Debian packages (.deb) from Node.js applications.
 
+[![Publish Package to npmjs](https://github.com/Soneliem/SNODEB/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/Soneliem/SNODEB/actions/workflows/npm-publish.yml)
+
 ## Features
 
 - Pure JavaScript implementation (no system dependencies)
@@ -75,6 +77,7 @@ Only the `name` and `version` are required in the `package.json` as all options 
 | `debConfig.systemd.group`         | No       | string   | Service group                     | "root"                                       |
 | `debConfig.systemd.entryPoint`    | No       | string   | Main Entry Point                  | value of package.json "main" or "index.js"   |
 | `debConfig.systemd.restart`       | No       | string   | Restart policy                    | "always"                                     |
+| `debConfig.systemd.restartSec`    | No       | number   | Restart delay in seconds          | 10                                           |
 | `debConfig.systemd.enableService` | No       | boolean  | Enable service after install      | true                                         |
 | `debConfig.systemd.startService`  | No       | boolean  | Start service after install       | true                                         |
 
@@ -96,6 +99,8 @@ When systemd integration is enabled (default: true), a systemd service file is c
 - Main entry point (default: package.json main or index.js)
 - Restart policy (default: always)
   - Supported values: "always", "on-failure", "no"
+- Restart delay (default: 10 seconds)
+  - Time to wait before restarting the service
 
 The service is configured to automatically run your Node.js application with appropriate permissions and restart behavior. After package installation:
 
