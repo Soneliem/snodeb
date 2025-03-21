@@ -8,7 +8,7 @@
     "build:deb": "snodeb"
   },
   "dependencies": {
-    "snodeb": "../../"
+    "snodeb": "file:../../snodeb"
   },
   "debConfig": {
     "maintainer": "Example Maintainer <maintainer@example.com>",
@@ -19,7 +19,7 @@
     "files": {
       "include": [
         "src/index.js",
-        ".env",
+        "env",
         "src/**/*"
       ],
       "exclude": [

@@ -1,42 +1,12 @@
 {
   "name": "snodeb",
-  "version": "0.0.1",
-  "main": "dist/index.js",
-  "type": "module",
-  "repository": "github:Soneliem/SNODEB",
-  "bin": {
-    "snodeb": "dist/index.js"
-  },
-  "scripts": {
-    "build": "tsup",
-    "watch": "tsup --watch",
-    "lint": "biome check src/",
-    "lint:fix": "biome check src/ --fix",
-    "format": "biome format src/",
-    "format:fix": "biome format src/ --fix"
-  },
+  "workspaces": [
+    "snodeb",
+    "examples/*"
+  ],
+  "private": true,
+  "version": "0.0.0",
   "author": "Sonel",
   "license": "MIT",
-  "description": "A pure JavaScript/TypeScript tool for creating Debian packages",
-  "tsup": {
-    "entry": [
-      "src/index.ts"
-    ],
-    "clean": true,
-    "format": [
-      "esm"
-    ],
-    "publicDir": true
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.24",
-    "@types/tar": "^6.1.13",
-    "tsup": "^8.4.0",
-    "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "glob": "^11.0.1",
-    "tar": "^7.4.3",
-    "type-fest": "^4.37.0"
-  }
+  "description": "A pure JavaScript/TypeScript tool for creating Debian packages"
 }

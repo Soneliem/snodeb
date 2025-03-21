@@ -4,7 +4,7 @@ const path = require("node:path");
 // Simple service that prints a message every 5 seconds
 function loadEnv() {
   try {
-    const envPath = path.join(__dirname, "..", ".env");
+    const envPath = path.join(__dirname, "..", "env");
     const envContent = readFileSync(envPath, "utf-8");
     const message = envContent.match(/MESSAGE=(.+)/)?.[1] || "Default message";
     return message;

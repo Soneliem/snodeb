@@ -26,12 +26,6 @@ Install the package:
 sudo dpkg -i deb/snodeb-example_1.0.0.deb
 ```
 
-The service will automatically:
-
-1. Install files to /usr/share/snodeb-example
-2. Create systemd service unit
-3. Enable and start the service
-
 Check service status:
 
 ```bash
