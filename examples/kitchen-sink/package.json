@@ -1,0 +1,40 @@
+{
+  "name": "snodeb-example",
+  "version": "1.0.0",
+  "description": "Example service for SNODEB",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "build:deb": "snodeb"
+  },
+  "dependencies": {
+    "snodeb": "../../"
+  },
+  "debConfig": {
+    "maintainer": "Example Maintainer <maintainer@example.com>",
+    "architecture": "all",
+    "depends": [
+      "nodejs"
+    ],
+    "files": {
+      "include": [
+        "src/index.js",
+        ".env",
+        "src/**/*"
+      ],
+      "exclude": [
+        "**/*.test.js"
+      ],
+      "installPath": "/usr/share/snodeb-example"
+    },
+    "systemd": {
+      "enable": true,
+      "user": "snodeb",
+      "group": "snodeb",
+      "restart": "always",
+      "enableService": true,
+      "startService": true,
+      "entryPoint": "src/index.js"
+    }
+  }
+}

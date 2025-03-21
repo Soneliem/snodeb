@@ -52,9 +52,13 @@ snodeb
 
 The tool will create a .deb package in the `deb` directory.
 
+## Other Examples
+
+See `examples/kitchen-sink` for a comprehensive usage example
+
 ## Configuration
 
-The following are all configuration options available
+Only the `name` and `version` are required in the `package.json` as all options have fairly sensible defaults. The following are all configuration options available.
 
 | Option                            | Required | Type     | Description                       | Default                                      |
 | --------------------------------- | -------- | -------- | --------------------------------- | -------------------------------------------- |
@@ -69,7 +73,7 @@ The following are all configuration options available
 | `debConfig.systemd.enable`        | No       | boolean  | Enable systemd service generation | true                                         |
 | `debConfig.systemd.user`          | No       | string   | Service user                      | "root"                                       |
 | `debConfig.systemd.group`         | No       | string   | Service group                     | "root"                                       |
-| `debConfig.systemd.mainEntry`     | No       | string   | Main Entry Point                  | value of package.json "main" or "index.js"   |
+| `debConfig.systemd.entryPoint`    | No       | string   | Main Entry Point                  | value of package.json "main" or "index.js"   |
 | `debConfig.systemd.restart`       | No       | string   | Restart policy                    | "always"                                     |
 | `debConfig.systemd.enableService` | No       | boolean  | Enable service after install      | true                                         |
 | `debConfig.systemd.startService`  | No       | boolean  | Start service after install       | true                                         |

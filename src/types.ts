@@ -11,7 +11,7 @@ export interface BuildConfig {
     enable: boolean;
     user: string;
     group: string;
-    mainEntry: string;
+    entryPoint: string;
     restart: "always" | "on-failure" | "no";
     enableService: boolean;
     startService: boolean;

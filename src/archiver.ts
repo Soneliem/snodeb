@@ -2,6 +2,7 @@ import { mkdir, writeFile, readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { create } from "tar";
+import { glob } from "glob";
 import type { BuildConfig, BuildOptions } from "./types.js";
 
 // Get the directory path for the templates
@@ -43,12 +44,21 @@ export class DebArchiver {
     // Create temporary installation directory structure
     await mkdir(path.join(installDir, this.config.files.installPath), { recursive: true });
 
-    // Copy files to temporary directory with correct structure
-    for (const file of this.config.files.include) {
-      const sourcePath = path.join(this.sourceDir, file);
-      const targetPath = path.join(installDir, this.config.files.installPath, file);
-      await mkdir(path.dirname(targetPath), { recursive: true });
-      await writeFile(targetPath, await readFile(sourcePath));
+    // Expand glob patterns and copy files
+    for (const pattern of this.config.files.include) {
+      const matches = await glob(pattern, {
+        cwd: this.sourceDir,
+        dot: true,
+        nodir: true,
+        ignore: this.config.files.exclude,
+      });
+
+      for (const file of matches) {
+        const sourcePath = path.join(this.sourceDir, file);
+        const targetPath = path.join(installDir, this.config.files.installPath, file);
+        await mkdir(path.dirname(targetPath), { recursive: true });
+        await writeFile(targetPath, await readFile(sourcePath));
+      }
     }
 
     // Add systemd service if enabled
@@ -101,7 +111,7 @@ export class DebArchiver {
       description: this.config.description,
       user: this.config.systemd.user,
       group: this.config.systemd.group,
-      mainEntry: path.posix.join(this.config.files.installPath, this.config.systemd.mainEntry).replace(/^\//g, ""),
+      entryPoint: path.posix.join(this.config.files.installPath, this.config.systemd.entryPoint).replace(/^\//g, ""),
       workingDirectory: this.config.files.installPath,
       restart: this.config.systemd.restart,
       name: this.config.name,
@@ -134,7 +144,7 @@ export class DebArchiver {
 
   public async build(): Promise<string> {
     console.log(`Starting build for ${this.config.name} v${this.config.version}...`);
-    await rm(this.tempDir, { recursive: true, force: true });
+    await rm(this.outputDir, { recursive: true, force: true });
     await mkdir(this.tempDir, { recursive: true });
     await mkdir(this.outputDir, { recursive: true });
 
@@ -157,7 +167,7 @@ export class DebArchiver {
 
     // Create final .deb file
     const outputFile = path.join(this.outputDir, `${this.config.name}_${this.config.version}.deb`);
-    console.log(`Creating final .deb package at: ${outputFile}`);
+    console.log("Writing final .deb package");
 
     // Create ar archive
     const arBuffer = Buffer.concat([
