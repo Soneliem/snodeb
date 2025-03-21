@@ -28,7 +28,6 @@ export class DebArchiver {
       `Architecture: ${this.config.architecture}`,
       `Maintainer: ${this.config.maintainer}`,
       `Description: ${this.config.description}`,
-      `Depends: ${this.config.depends.join(", ")}`,
     ];
 
     if (this.config.depends.length) {
@@ -63,14 +62,12 @@ export class DebArchiver {
     }
 
     // Add systemd service if enabled
-    if (this.config.systemd.enable) {
-      const systemdPath = path.join(installDir, "lib/systemd/system");
-      await mkdir(systemdPath, { recursive: true });
-      await writeFile(
-        path.join(systemdPath, `${this.config.name}.service`),
-        await readFile(path.join(this.tempDir, `${this.config.name}.service`)),
-      );
-    }
+    const systemdPath = path.join(installDir, "lib/systemd/system");
+    await mkdir(systemdPath, { recursive: true });
+    await writeFile(
+      path.join(systemdPath, `${this.config.name}.service`),
+      await readFile(path.join(this.tempDir, `${this.config.name}.service`)),
+    );
 
     // Create tar archive with proper directory structure
     await create(
@@ -97,7 +94,7 @@ export class DebArchiver {
         cwd: this.tempDir,
         portable: true,
       },
-      ["control", ...(this.config.systemd.enable ? ["postinst", "prerm"] : [])],
+      ["control", "postinst", "prerm"],
     );
 
     return await readFile(controlPath);
@@ -112,7 +109,7 @@ export class DebArchiver {
       description: this.config.description,
       user: this.config.systemd.user,
       group: this.config.systemd.group,
-      entryPoint: path.posix.join(this.config.files.installPath, this.config.systemd.entryPoint).replace(/^\//g, ""),
+      entryPoint: `${this.config.systemd.useNodeExecutor ? "/usr/bin/node " : ""}/${path.posix.join(this.config.files.installPath, this.config.systemd.entryPoint).replace(/^\//g, "")}`,
       workingDirectory: this.config.files.installPath,
       restart: this.config.systemd.restart,
       restartSec: this.config.systemd.restartSec.toString(),
@@ -173,7 +170,7 @@ export class DebArchiver {
     // Create control file and systemd service if enabled
     console.log("Creating control file...");
     await this.createControlFile();
-    if (this.config.systemd.enable) await this.createSystemdService();
+    await this.createSystemdService();
     console.log("Creating data archives...");
 
     // Create archives

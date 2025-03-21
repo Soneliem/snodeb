@@ -8,7 +8,6 @@ export interface BuildConfig {
   architecture: string;
   depends: string[];
   systemd: {
-    enable: boolean;
     user: string;
     group: string;
     entryPoint: string;
@@ -16,6 +15,7 @@ export interface BuildConfig {
     restartSec: number;
     enableService: boolean;
     startService: boolean;
+    useNodeExecutor: boolean;
   };
   files: {
     include: string[];

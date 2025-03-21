@@ -24,7 +24,7 @@ async function main() {
     const sourceDir = process.cwd();
     const outputDir = path.join(sourceDir, "deb");
 
-    // Create build configuration
+    // Create build configuration and set defaults
     const buildConfig: BuildConfig = {
       name: packageJson.name,
       version: packageJson.version,
@@ -33,19 +33,19 @@ async function main() {
       architecture: packageJson.debConfig.architecture || "all",
       depends: packageJson.debConfig.depends || ["nodejs"],
       files: {
-        include: packageJson.debConfig.files?.include || (packageJson.main ? [packageJson.main] : ["index.js"]),
-        exclude: packageJson.debConfig.files?.exclude || [],
-        installPath: packageJson.debConfig.files?.installPath || `/usr/share/${packageJson.name}`,
+        include: packageJson.debConfig.files.include || (packageJson.main ? [packageJson.main] : ["index.js"]),
+        exclude: packageJson.debConfig.files.exclude || [],
+        installPath: packageJson.debConfig.files.installPath || `/usr/share/${packageJson.name}`,
       },
       systemd: {
-        enable: packageJson.debConfig.systemd?.enable || true,
-        user: packageJson.debConfig.systemd?.user || "root",
-        group: packageJson.debConfig.systemd?.group || "root",
-        entryPoint: packageJson.debConfig.systemd?.entryPoint || packageJson.main || "index.js",
-        restart: packageJson.debConfig.systemd?.restart || "always",
-        restartSec: packageJson.debConfig.systemd?.restartSec || 10,
-        enableService: packageJson.debConfig.systemd?.enableService ?? true,
-        startService: packageJson.debConfig.systemd?.startService ?? true,
+        user: packageJson.debConfig.systemd.user || "root",
+        group: packageJson.debConfig.systemd.group || "root",
+        entryPoint: packageJson.debConfig.systemd.entryPoint || packageJson.main || "index.js",
+        restart: packageJson.debConfig.systemd.restart || "always",
+        restartSec: packageJson.debConfig.systemd.restartSec || 10,
+        enableService: packageJson.debConfig.systemd.enableService ?? true,
+        startService: packageJson.debConfig.systemd.startService ?? true,
+        useNodeExecutor: packageJson.debConfig.systemd.useNodeExecutor ?? true,
       },
     };
 
