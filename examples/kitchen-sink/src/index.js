@@ -16,7 +16,7 @@ function loadEnv() {
 
 const MESSAGE = loadEnv();
 const INTERVAL = 5000;
-const PREFIX = "[SNODEB]";
+const PREFIX = "[snodeb]";
 
 function logMessage() {
   const timestamp = new Date().toISOString();

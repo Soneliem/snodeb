@@ -1,0 +1,61 @@
+---
+sidebar_position: 2
+---
+
+# Getting Started
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+## Installation
+
+Install snodeb as a development dependency in your Node.js project:
+
+<Tabs groupId="install-type">
+  <TabItem value="script" label="Script">
+```bash
+npm install -D snodeb
+```
+</TabItem>
+  <TabItem value="global" label="Global">
+```bash
+npm install -g snodeb
+```
+  </TabItem>
+</Tabs>
+
+## Basic Usage
+
+If you're lucky your the default options might work for you. But check the [configuration options](./configuration/index.md) anyway.
+
+<Tabs groupId="install-type">
+  <TabItem value="script" label="Script">
+```json
+"scripts": {
+  "build:deb": "snodeb"
+}
+```
+```bash
+npm run build:deb
+```
+
+  </TabItem>
+  <TabItem value="global" label="Global">
+```bash
+snodeb
+```
+  </TabItem>
+</Tabs>
+
+The tool will create a .deb package in the `deb` directory.
+
+## Example Project
+
+For a comprehensive usage example, check out the `examples/kitchen-sink` directory in the [GitHub repository](https://github.com/soneliem/snodeb).
+
+## Next Steps
+
+- Learn about all available [configuration options](./configuration)
+- Understand how to [customize systemd services](./configuration/systemd-service)

@@ -1,6 +1,6 @@
-# SNODEB Example Service
+# snodeb Example Service
 
-This is a kitchen sink example that demonstrates SNODEB's packaging capabilities.
+This is a kitchen sink example that demonstrates snodeb's packaging capabilities.
 
 ## Building the Package
 

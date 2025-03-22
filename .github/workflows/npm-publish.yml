@@ -1,7 +1,9 @@
 name: Publish Package to npmjs
+
 on:
   release:
     types: [published]
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,8 +12,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
-      - run: npm build
+      - run: npm ci --workspace snodeb
+      - run: npm build --workspace snodeb
   publish:
     runs-on: ubuntu-latest
     permissions:
@@ -23,7 +25,7 @@ jobs:
         with:
           node-version: 20
           registry-url: "https://registry.npmjs.org"
-      - run: npm ci
+      - run: npm ci --workspace snodeb
       - run: npm publish --workspace snodeb --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

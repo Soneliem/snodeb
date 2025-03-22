@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "dist/index.js",
   "type": "module",
-  "repository": "github:Soneliem/SNODEB",
+  "repository": "github:Soneliem/snodeb",
   "bin": {
     "snodeb": "dist/index.js"
   },

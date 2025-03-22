@@ -1,7 +1,7 @@
 {
   "name": "snodeb-example",
   "version": "1.0.0",
-  "description": "Example service for SNODEB",
+  "description": "Example service for snodeb",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
