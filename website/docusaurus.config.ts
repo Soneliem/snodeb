@@ -41,7 +41,7 @@ const config: Config = {
 					sidebarPath: "./sidebars.ts",
 					// Please change this to your repo.
 					// Remove this to remove the "edit this page" links.
-					editUrl: "https://github.com/soneliem/snodeb/tree/main/website/docs/",
+					editUrl: "https://github.com/soneliem/snodeb/tree/main/website/",
 				},
 				theme: {
 					customCss: "./src/css/custom.css",
@@ -52,7 +52,6 @@ const config: Config = {
 
 	themeConfig: {
 		// Replace with your project's social card
-		image: "img/docusaurus-social-card.jpg",
 		navbar: {
 			title: "snodeb",
 			logo: {
