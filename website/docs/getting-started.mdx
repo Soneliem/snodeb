@@ -11,37 +11,55 @@ import TabItem from '@theme/TabItem';
 
 ## Installation
 
-Install snodeb as a development dependency in your Node.js project:
+Install snodeb as a development or global dependency in your Node.js project:
 
 <Tabs groupId="install-type">
   <TabItem value="script" label="Script">
-    ```bash npm install -D snodeb ```
+
+```bash
+npm install -D snodeb
+```
+
   </TabItem>
   <TabItem value="global" label="Global">
-    ```bash npm install -g snodeb ```
+
+```bash
+npm install -g snodeb
+```
+
   </TabItem>
 </Tabs>
 
 ## Basic Usage
 
-If you're lucky your the default options might work for you. But check the [configuration options](./configuration) anyway.
+If you're lucky the default options might work for you! But you probably should look into the [configuration options](./configuration).
 
 <Tabs groupId="install-type">
   <TabItem value="script" label="Script">
+
+Add snodeb as a script
+
 ```json
 "scripts": {
   "build:deb": "snodeb"
 }
 ```
+
+Run the script
+
 ```bash
 npm run build:deb
 ```
 
   </TabItem>
   <TabItem value="global" label="Global">
+
+Run the script
+
 ```bash
 snodeb
 ```
+
   </TabItem>
 </Tabs>
 
