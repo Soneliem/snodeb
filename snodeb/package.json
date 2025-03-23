@@ -1,12 +1,19 @@
 {
   "name": "snodeb",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "dist/index.js",
   "type": "module",
-  "repository": "github:Soneliem/snodeb",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Soneliem/snodeb.git"
+  },
+  "homepage": "https://snodeb.sonel.dev",
   "bin": {
     "snodeb": "dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "watch": "tsup --watch",
@@ -17,7 +24,7 @@
   },
   "author": "Sonel",
   "license": "MIT",
-  "description": "A pure JavaScript/TypeScript tool for creating Debian packages",
+  "description": "Fast and simple Debian packaging for Node.js projects",
   "tsup": {
     "entry": [
       "src/index.ts"
@@ -26,6 +33,7 @@
     "format": [
       "esm"
     ],
+    "outDir": "dist",
     "publicDir": true
   },
   "devDependencies": {

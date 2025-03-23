@@ -9,5 +9,6 @@
   "version": "0.0.0",
   "author": "Sonel",
   "license": "MIT",
-  "description": "A pure JavaScript/TypeScript tool for creating Debian packages"
+  "homepage": "https://snodeb.sonel.dev",
+  "description": "Fast and simple Debian packaging for Node.js projects"
 }

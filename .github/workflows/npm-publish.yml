@@ -14,7 +14,12 @@ jobs:
           node-version: 20
       - run: npm ci --workspace snodeb
       - run: npm run build --workspace snodeb
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-output
+          path: snodeb/dist/
   publish:
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -25,6 +30,10 @@ jobs:
         with:
           node-version: 20
           registry-url: "https://registry.npmjs.org"
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist-output
+          path: snodeb/dist/
       - run: npm ci --workspace snodeb
       - run: npm publish --workspace snodeb --provenance --access public
         env:
