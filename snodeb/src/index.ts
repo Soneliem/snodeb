@@ -2,7 +2,7 @@
 
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { DebArchiver } from "./archiver.js";
+import { DebArchiver } from "./core/archiver.js";
 import type { BuildConfig, PackageJsonCustom } from "./types.js";
 
 async function main() {
