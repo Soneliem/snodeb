@@ -6,6 +6,9 @@ on:
 
 jobs:
   build:
+    name: Build Packgage
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,6 +22,7 @@ jobs:
           name: dist-output
           path: snodeb/dist/
   publish:
+    name: Publish Package
     needs: build
     runs-on: ubuntu-latest
     permissions:

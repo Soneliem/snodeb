@@ -1,5 +1,8 @@
 name: Test Build
 
+permissions:
+  contents: read
+
 on:
   pull_request:
     branches:
@@ -7,6 +10,7 @@ on:
 
 jobs:
   build:
+    name: Build Package
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
