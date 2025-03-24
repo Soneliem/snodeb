@@ -24,6 +24,13 @@ export interface BuildConfig {
     configInclude: string[];
     configExclude: string[];
   };
+  customScripts?: {
+    preinst?: string;
+    postinst?: string;
+    prerm?: string;
+    postrm?: string;
+    executeInOrder?: boolean;
+  };
 }
 
 export type PackageJsonCustom = PackageJson & {

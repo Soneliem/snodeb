@@ -49,6 +49,7 @@ async function main() {
         startService: packageJson.debConfig.systemd.startService ?? true,
         useNodeExecutor: packageJson.debConfig.systemd.useNodeExecutor ?? true,
       },
+      customScripts: packageJson.debConfig?.customScripts,
     };
 
     const archiver = new DebArchiver({

@@ -121,7 +121,15 @@ export class DebArchiver {
   private async createControlArchive(): Promise<Buffer> {
     const controlPath = path.join(this.tempDir, "control.tar.gz");
 
-    const files = ["control", "postinst", "prerm"];
+    const files = ["control"];
+
+    // Add maintainer scripts if they exist
+    const scriptFiles = ["preinst", "postinst", "prerm", "postrm"];
+    for (const script of scriptFiles) {
+      if (await this.hasScript(script)) {
+        files.push(script);
+      }
+    }
 
     if (this.config.files.configInclude.length > 0) files.push("conffiles");
 
@@ -136,6 +144,69 @@ export class DebArchiver {
     );
 
     return await readFile(controlPath);
+  }
+
+  private async hasScript(scriptName: string): Promise<boolean> {
+    try {
+      await readFile(path.join(this.tempDir, scriptName));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private async createMaintainerScript(
+    scriptName: string,
+    templatePath: string | null,
+    replacements: Record<string, string> = {},
+    customScriptPath?: string,
+  ): Promise<void> {
+    let scriptContent = "";
+
+    if (templatePath) {
+      scriptContent = await readFile(templatePath, "utf-8");
+      for (const [key, value] of Object.entries(replacements)) {
+        scriptContent = scriptContent.replace(new RegExp(`{{${key}}}`, "g"), value);
+      }
+    }
+
+    if (customScriptPath) {
+      const customScript = await this.readCustomScript(customScriptPath);
+
+      console.log(customScript);
+
+      if (customScript) {
+        if (!scriptContent) {
+          // For scripts without template (preinst, postrm)
+          scriptContent = `#!/bin/sh\nset -e\n\n# Custom ${scriptName} script\n${customScript}\n\nexit 0\n`;
+        } else {
+          // For scripts with template (postinst, prerm), insert before exit 0
+          const exitMatch = scriptContent.match(/\nexit 0\n/);
+          if (exitMatch) {
+            const insertPos = exitMatch.index;
+            scriptContent = `${scriptContent.slice(0, insertPos)}\n# Custom ${scriptName} script\n${customScript}\n${scriptContent.slice(insertPos)}`;
+          } else {
+            scriptContent += `\n# Custom ${scriptName} script\n${customScript}\n\nexit 0\n`;
+          }
+        }
+      }
+    }
+
+    if (scriptContent) {
+      const scriptPath = path.join(this.tempDir, scriptName);
+      await writeFile(scriptPath, scriptContent, { mode: 0o755 });
+    }
+  }
+
+  private async readCustomScript(scriptPath: string | undefined): Promise<string> {
+    if (!scriptPath) return "";
+    try {
+      const absolutePath = path.isAbsolute(scriptPath) ? scriptPath : path.join(this.sourceDir, scriptPath);
+      return await readFile(absolutePath, "utf-8");
+    } catch (error) {
+      console.warn(`Warning: Could not read custom script at ${scriptPath}: ${error}`);
+      return "";
+    }
   }
 
   private async createSystemdService(): Promise<void> {
@@ -160,12 +231,13 @@ export class DebArchiver {
     const servicePath = path.join(this.tempDir, `${this.config.name}.service`);
     await writeFile(servicePath, serviceTemplate);
 
-    // Create postinst script for enabling and starting the service
-    const postinstPath = path.join(this.tempDir, "postinst");
-    const postinstTemplatePath = path.join(templateDir, "postinst.sh");
-    let postinstTemplate = await readFile(postinstTemplatePath, "utf-8");
+    // Create maintainer scripts
+    const { customScripts } = this.config;
 
-    const postInstReplacements = {
+    console.log(customScripts);
+
+    // Common replacements for systemd-related scripts
+    const systemdReplacements = {
       name: this.config.name,
       user: this.config.systemd.user,
       group: this.config.systemd.group,
@@ -173,26 +245,27 @@ export class DebArchiver {
       startService: this.config.systemd.startService.toString(),
     };
 
-    for (const [key, value] of Object.entries(postInstReplacements)) {
-      postinstTemplate = postinstTemplate.replace(new RegExp(`{{${key}}}`, "g"), value);
-    }
+    // Create preinst script
+    await this.createMaintainerScript("preinst", null, {}, customScripts?.preinst);
 
-    await writeFile(postinstPath, postinstTemplate, { mode: 0o755 });
+    // Create postinst script
+    await this.createMaintainerScript(
+      "postinst",
+      path.join(templateDir, "postinst.sh"),
+      systemdReplacements,
+      customScripts?.postinst,
+    );
 
-    // Create prerm script for cleanup before package removal
-    const prermPath = path.join(this.tempDir, "prerm");
-    const prermTemplatePath = path.join(templateDir, "prerm.sh");
-    let prermTemplate = await readFile(prermTemplatePath, "utf-8");
+    // Create prerm script
+    await this.createMaintainerScript(
+      "prerm",
+      path.join(templateDir, "prerm.sh"),
+      { name: this.config.name },
+      customScripts?.prerm,
+    );
 
-    const prermReplacements = {
-      name: this.config.name,
-    };
-
-    for (const [key, value] of Object.entries(prermReplacements)) {
-      prermTemplate = prermTemplate.replace(new RegExp(`{{${key}}}`, "g"), value);
-    }
-
-    await writeFile(prermPath, prermTemplate, { mode: 0o755 });
+    // Create postrm script
+    await this.createMaintainerScript("postrm", null, {}, customScripts?.postrm);
   }
 
   public async build(): Promise<string> {

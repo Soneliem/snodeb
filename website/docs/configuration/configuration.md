@@ -54,11 +54,23 @@ Here's a complete example of all available configuration options with explanatio
       "restart": "always",                          // Restart policy (Default: "always")
       "restartSec": 10,                             // Restart delay in seconds (Default: 10)
       "enableService": true,                        // Enable service after install (Default: true)
-      "startService": true                          // Start service after install (Default: true)
+      "startService": true,                         // Start service after install (Default: true)
+      "useNodeExecutor": true                       // Use node to execute entry point (Default: true)
+    },
+    // Custom maintainer scripts configuration
+    "customScripts": {
+      "preinst": "debian/preinst.sh",              // Custom pre-installation script
+      "postinst": "debian/postinst.sh",            // Custom post-installation script
+      "prerm": "debian/prerm.sh",                  // Custom pre-removal script
+      "postrm": "debian/postrm.sh"                 // Custom post-removal script
     }
   }
 }
 ```
+
+## Custom Maintainer Scripts
+
+See [custom scripts](./configuration/custom-scripts)
 
 ## Configuration Files (conffiles)
 
@@ -98,4 +110,3 @@ snodeb uses glob patterns for file inclusion and exclusion. Here are some exampl
     ]
   }
 }
-```
