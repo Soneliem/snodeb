@@ -3,7 +3,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { DebArchiver } from "./archiver.js";
-import type { PackageJsonCustom, BuildConfig } from "./types.js";
+import type { BuildConfig, PackageJsonCustom } from "./types.js";
 
 async function main() {
   try {
@@ -35,6 +35,8 @@ async function main() {
       files: {
         include: packageJson.debConfig.files.include || (packageJson.main ? [packageJson.main] : ["index.js"]),
         exclude: packageJson.debConfig.files.exclude || [],
+        configIncludeFiles: packageJson.debConfig.files.configIncludeFiles || [],
+        configExcludeFiles: packageJson.debConfig.files.configExcludeFiles || [],
         installPath: packageJson.debConfig.files.installPath || `/usr/share/${packageJson.name}`,
       },
       systemd: {

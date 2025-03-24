@@ -27,14 +27,22 @@ Here's a complete example of all available configuration options with explanatio
     "files": {
       // Files to include in the package
       "include": [                                  // Default: [package.json "main" or "index.js"]
-        "dist/index.js",
+        "dist/index.js",                            // Supports glob patterns
         ".env",
         "config/**/*"
       ],
       // Files to exclude from the package
       "exclude": ["**/*.test.js"],                  // Default: []
       // Where to install the files on the target system
-      "installPath": "/opt/your-app"                // Default: "/usr/share/${name}"
+      "installPath": "/opt/your-app",               // Default: "/usr/share/${name}"
+      // Files to mark as configuration files (conffiles)
+      "configIncludeFiles": [                       // Default: []
+        "config/*.json"                             // Supports glob patterns
+      ],
+      // Files to exclude from configuration files (conffiles)
+      "configExcludeFiles": [                       // Default: []
+        "config/*.json"                             // Supports glob patterns
+      ]
     },
 
     // Systemd service configuration
@@ -51,6 +59,27 @@ Here's a complete example of all available configuration options with explanatio
   }
 }
 ```
+
+## Configuration Files (conffiles)
+
+Debian packages can mark certain files as configuration files. These files receive special treatment during package upgrades:
+
+- If a configuration file has been modified by the system administrator, the package manager will ask what to do during an upgrade
+- This prevents package updates from overwriting local configuration changes
+
+To mark files as configuration files, use the `configIncludeFiles` array:
+
+```json
+{
+  "configIncludeFiles": [
+    "config/*.json",     // All JSON files in config directory
+    "config/*.yaml",     // All YAML files in config directory
+    ".env"              // Specific file
+  ]
+}
+```
+
+The `configIncludeFiles` and `configExcludeFiles` arrays supports glob patterns and follows the same pattern matching rules as `include` and `exclude`. All paths are relative to your project directory and will be automatically adjusted to their final installation paths in the package.
 
 ## File Patterns
 

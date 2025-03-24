@@ -12,7 +12,8 @@
     "snodeb": "dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "public"
   ],
   "scripts": {
     "build": "tsup",

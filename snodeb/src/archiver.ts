@@ -1,12 +1,12 @@
-import { mkdir, writeFile, readFile, rm } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { create } from "tar";
 import { glob } from "glob";
+import { create } from "tar";
 import type { BuildConfig, BuildOptions } from "./types.js";
 
 // Get the directory path for the templates
-const templateDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "public", "templates");
+const templateDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "templates");
 
 export class DebArchiver {
   private config: BuildConfig;
@@ -19,6 +19,31 @@ export class DebArchiver {
     this.sourceDir = options.sourceDir;
     this.outputDir = options.outputDir;
     this.tempDir = path.join(this.outputDir, ".temp");
+  }
+
+  private async createConffilesFile(): Promise<void> {
+    const configFiles = [];
+
+    // Expand glob patterns for config files
+    for (const pattern of this.config.files.configIncludeFiles) {
+      const matches = await glob(pattern, {
+        cwd: this.sourceDir,
+        dot: true,
+        nodir: true,
+        ignore: this.config.files.configExcludeFiles,
+      });
+
+      for (const file of matches) {
+        // Convert to absolute path starting with /
+        const fullPath = path.posix.join("/", this.config.files.installPath, file);
+        configFiles.push(fullPath.replace(/^\/+/, "/"));
+      }
+    }
+
+    if (configFiles.length > 0) {
+      // Create conffiles with newline-separated paths
+      await writeFile(path.join(this.tempDir, "conffiles"), `${configFiles.join("\n")}\n`);
+    }
   }
 
   private async createControlFile(): Promise<void> {
@@ -42,7 +67,9 @@ export class DebArchiver {
     const installDir = path.join(this.tempDir, "install");
 
     // Create temporary installation directory structure
-    await mkdir(path.join(installDir, this.config.files.installPath), { recursive: true });
+    await mkdir(path.join(installDir, this.config.files.installPath), {
+      recursive: true,
+    });
 
     // Expand glob patterns and copy files
     for (const pattern of this.config.files.include) {
@@ -87,6 +114,10 @@ export class DebArchiver {
   private async createControlArchive(): Promise<Buffer> {
     const controlPath = path.join(this.tempDir, "control.tar.gz");
 
+    const files = ["control", "postinst", "prerm"];
+
+    if (this.config.files.configIncludeFiles.length > 0) files.push("conffiles");
+
     await create(
       {
         gzip: true,
@@ -94,7 +125,7 @@ export class DebArchiver {
         cwd: this.tempDir,
         portable: true,
       },
-      ["control", "postinst", "prerm"],
+      files,
     );
 
     return await readFile(controlPath);
@@ -170,6 +201,7 @@ export class DebArchiver {
     // Create control file and systemd service if enabled
     console.log("Creating control file...");
     await this.createControlFile();
+    await this.createConffilesFile();
     await this.createSystemdService();
     console.log("Creating data archives...");
 
