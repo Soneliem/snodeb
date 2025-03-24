@@ -21,8 +21,8 @@ export interface BuildConfig {
     include: string[];
     exclude: string[];
     installPath: string;
-    configIncludeFiles: string[];
-    configExcludeFiles: string[];
+    configInclude: string[];
+    configExclude: string[];
   };
 }
 

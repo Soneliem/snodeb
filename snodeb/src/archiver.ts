@@ -21,22 +21,27 @@ export class DebArchiver {
     this.tempDir = path.join(this.outputDir, ".temp");
   }
 
-  private async createConffilesFile(): Promise<void> {
+  private async createConffilesFile() {
+    const installDir = path.join(this.tempDir, "install");
     const configFiles = [];
 
     // Expand glob patterns for config files
-    for (const pattern of this.config.files.configIncludeFiles) {
+    for (const pattern of this.config.files.configInclude) {
       const matches = await glob(pattern, {
         cwd: this.sourceDir,
         dot: true,
         nodir: true,
-        ignore: this.config.files.configExcludeFiles,
+        ignore: this.config.files.configExclude,
+        posix: true,
       });
 
       for (const file of matches) {
-        // Convert to absolute path starting with /
-        const fullPath = path.posix.join("/", this.config.files.installPath, file);
-        configFiles.push(fullPath.replace(/^\/+/, "/"));
+        const sourcePath = path.join(this.sourceDir, file);
+        const targetPath = path.join(installDir, this.config.files.installPath, file);
+
+        configFiles.push(path.posix.join(this.config.files.installPath, file));
+        await mkdir(path.dirname(targetPath), { recursive: true });
+        await writeFile(targetPath, await readFile(sourcePath));
       }
     }
 
@@ -78,6 +83,7 @@ export class DebArchiver {
         dot: true,
         nodir: true,
         ignore: this.config.files.exclude,
+        posix: true,
       });
 
       for (const file of matches) {
@@ -116,7 +122,7 @@ export class DebArchiver {
 
     const files = ["control", "postinst", "prerm"];
 
-    if (this.config.files.configIncludeFiles.length > 0) files.push("conffiles");
+    if (this.config.files.configInclude.length > 0) files.push("conffiles");
 
     await create(
       {

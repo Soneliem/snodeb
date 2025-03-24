@@ -35,8 +35,8 @@ async function main() {
       files: {
         include: packageJson.debConfig.files.include || (packageJson.main ? [packageJson.main] : ["index.js"]),
         exclude: packageJson.debConfig.files.exclude || [],
-        configIncludeFiles: packageJson.debConfig.files.configIncludeFiles || [],
-        configExcludeFiles: packageJson.debConfig.files.configExcludeFiles || [],
+        configInclude: packageJson.debConfig.files.configInclude || [],
+        configExclude: packageJson.debConfig.files.configExclude || [],
         installPath: packageJson.debConfig.files.installPath || `/usr/share/${packageJson.name}`,
       },
       systemd: {

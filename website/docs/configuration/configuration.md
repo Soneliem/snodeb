@@ -36,11 +36,11 @@ Here's a complete example of all available configuration options with explanatio
       // Where to install the files on the target system
       "installPath": "/opt/your-app",               // Default: "/usr/share/${name}"
       // Files to mark as configuration files (conffiles)
-      "configIncludeFiles": [                       // Default: []
+      "configInclude": [                       // Default: []
         "config/*.json"                             // Supports glob patterns
       ],
       // Files to exclude from configuration files (conffiles)
-      "configExcludeFiles": [                       // Default: []
+      "configExclude": [                       // Default: []
         "config/*.json"                             // Supports glob patterns
       ]
     },
@@ -67,11 +67,11 @@ Debian packages can mark certain files as configuration files. These files recei
 - If a configuration file has been modified by the system administrator, the package manager will ask what to do during an upgrade
 - This prevents package updates from overwriting local configuration changes
 
-To mark files as configuration files, use the `configIncludeFiles` array:
+To mark files as configuration files, use the `configInclude` array:
 
 ```json
 {
-  "configIncludeFiles": [
+  "configInclude": [
     "config/*.json",     // All JSON files in config directory
     "config/*.yaml",     // All YAML files in config directory
     ".env"              // Specific file
@@ -79,7 +79,7 @@ To mark files as configuration files, use the `configIncludeFiles` array:
 }
 ```
 
-The `configIncludeFiles` and `configExcludeFiles` arrays supports glob patterns and follows the same pattern matching rules as `include` and `exclude`. All paths are relative to your project directory and will be automatically adjusted to their final installation paths in the package.
+The `configInclude` and `configExclude` arrays supports glob patterns and follows the same pattern matching rules as `include` and `exclude`. All paths are relative to your project directory and will be automatically adjusted to their final installation paths in the package.
 
 ## File Patterns
 
