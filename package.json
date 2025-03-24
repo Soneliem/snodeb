@@ -1,10 +1,6 @@
 {
   "name": "snodeb",
-  "workspaces": [
-    "snodeb",
-    "examples/*",
-    "website"
-  ],
+  "workspaces": ["snodeb", "examples/*", "website"],
   "private": true,
   "version": "0.0.0",
   "author": "Sonel",

@@ -13,18 +13,10 @@
   "debConfig": {
     "maintainer": "Example Maintainer <maintainer@example.com>",
     "architecture": "all",
-    "depends": [
-      "nodejs"
-    ],
+    "depends": ["nodejs"],
     "files": {
-      "include": [
-        "src/index.js",
-        "env",
-        "src/**/*"
-      ],
-      "exclude": [
-        "**/*.test.js"
-      ],
+      "include": ["src/index.js", "env", "src/**/*"],
+      "exclude": ["**/*.test.js"],
       "installPath": "/usr/share/snodeb-example"
     },
     "systemd": {
