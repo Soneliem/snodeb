@@ -5,8 +5,9 @@ import { glob } from "glob";
 import { create } from "tar";
 import type { BuildConfig, BuildOptions } from "./types.js";
 
-// Get the directory path for the templates
-const templateDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "templates");
+// Get the directory path for the templates, accounting for both development and production paths
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
+const templateDir = path.join(currentDir, currentDir.endsWith("src") ? "../public/templates" : "./templates");
 
 export class DebArchiver {
   private config: BuildConfig;
