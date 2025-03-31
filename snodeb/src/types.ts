@@ -34,7 +34,7 @@ export interface BuildConfig {
 }
 
 export type PackageJsonCustom = PackageJson & {
-  debConfig: BuildConfig;
+  snodeb: BuildConfig;
 };
 
 export interface BuildOptions {

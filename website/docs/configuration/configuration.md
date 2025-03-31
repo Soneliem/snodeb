@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Configuration
 
-snodeb configuration is done through the `debConfig` section in your project's `package.json`. Only the `name` and `version` fields are required as all options have sensible defaults.
+snodeb configuration is done through the `snodeb` section in your project's `package.json`. Only the `name` and `version` fields are required as all options have sensible defaults.
 
 ## All Configuration Options
 
@@ -17,7 +17,7 @@ Here's a complete example of all available configuration options with explanatio
   "version": "1.0.0",        // Package version
 
   // Main snodeb configuration section
-  "debConfig": {
+  "snodeb": {
     // Package metadata
     "maintainer": "Your Name <email@example.com>",  // Default: "Unknown"
     "architecture": "all",                          // Default: "all"

@@ -14,6 +14,11 @@ import TabItem from '@theme/TabItem';
 Install snodeb as a development or global dependency in your Node.js project:
 
 <Tabs groupId="install-type">
+  <TabItem value="npx" label="NPX">
+
+Run directly without installing using `npx`. This is very useful during a ci job to not have an impact on node_module while bundling.
+
+  </TabItem>
   <TabItem value="script" label="Script">
 
 ```bash
@@ -35,6 +40,13 @@ npm install -g snodeb
 If you're lucky the default options might work for you! But you probably should look into the [configuration options](./configuration).
 
 <Tabs groupId="install-type">
+  <TabItem value="npx" label="NPX">
+
+```bash
+npx snodeb
+```
+
+  </TabItem>
   <TabItem value="script" label="Script">
 
 Add snodeb as a script
