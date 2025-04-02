@@ -18,4 +18,4 @@ jobs:
         with:
           node-version: 20
       - run: npm ci --workspace snodeb
-      - run: npm build --workspace snodeb
+      - run: npm run build --workspace snodeb

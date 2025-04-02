@@ -1,6 +1,6 @@
 {
   "name": "snodeb",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "type": "module",
   "repository": {
@@ -11,7 +11,10 @@
   "bin": {
     "snodeb": "dist/index.js"
   },
-  "files": ["dist", "public"],
+  "files": [
+    "dist",
+    "public"
+  ],
   "scripts": {
     "build": "tsup",
     "watch": "tsup --watch",
@@ -24,9 +27,13 @@
   "license": "MIT",
   "description": "Fast and simple Debian packaging for Node.js projects",
   "tsup": {
-    "entry": ["src/index.ts"],
+    "entry": [
+      "src/index.ts"
+    ],
     "clean": true,
-    "format": ["esm"],
+    "format": [
+      "esm"
+    ],
     "outDir": "dist",
     "publicDir": true
   },

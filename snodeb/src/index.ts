@@ -17,8 +17,8 @@ async function main() {
       throw new Error("package.json must contain name, version, and description fields");
     }
 
-    if (!packageJson.debConfig) {
-      throw new Error("package.json must contain a debConfig field");
+    if (!packageJson.snodeb) {
+      throw new Error("package.json must contain a snodeb field");
     }
 
     const sourceDir = process.cwd();
@@ -29,27 +29,27 @@ async function main() {
       name: packageJson.name,
       version: packageJson.version,
       description: packageJson.description || "",
-      maintainer: packageJson.debConfig.maintainer || "Unknown",
-      architecture: packageJson.debConfig.architecture || "all",
-      depends: packageJson.debConfig.depends || ["nodejs"],
+      maintainer: packageJson.snodeb.maintainer || "Unknown",
+      architecture: packageJson.snodeb.architecture || "all",
+      depends: packageJson.snodeb.depends || ["nodejs"],
       files: {
-        include: packageJson.debConfig.files.include || (packageJson.main ? [packageJson.main] : ["index.js"]),
-        exclude: packageJson.debConfig.files.exclude || [],
-        configInclude: packageJson.debConfig.files.configInclude || [],
-        configExclude: packageJson.debConfig.files.configExclude || [],
-        installPath: packageJson.debConfig.files.installPath || `/usr/share/${packageJson.name}`,
+        include: packageJson.snodeb.files.include || (packageJson.main ? [packageJson.main] : ["index.js"]),
+        exclude: packageJson.snodeb.files.exclude || [],
+        configInclude: packageJson.snodeb.files.configInclude || [],
+        configExclude: packageJson.snodeb.files.configExclude || [],
+        installPath: packageJson.snodeb.files.installPath || `/usr/share/${packageJson.name}`,
       },
       systemd: {
-        user: packageJson.debConfig.systemd.user || "root",
-        group: packageJson.debConfig.systemd.group || "root",
-        entryPoint: packageJson.debConfig.systemd.entryPoint || packageJson.main || "index.js",
-        restart: packageJson.debConfig.systemd.restart || "always",
-        restartSec: packageJson.debConfig.systemd.restartSec || 10,
-        enableService: packageJson.debConfig.systemd.enableService ?? true,
-        startService: packageJson.debConfig.systemd.startService ?? true,
-        useNodeExecutor: packageJson.debConfig.systemd.useNodeExecutor ?? true,
+        user: packageJson.snodeb.systemd.user || "root",
+        group: packageJson.snodeb.systemd.group || "root",
+        entryPoint: packageJson.snodeb.systemd.entryPoint || packageJson.main || "index.js",
+        restart: packageJson.snodeb.systemd.restart || "always",
+        restartSec: packageJson.snodeb.systemd.restartSec || 10,
+        enableService: packageJson.snodeb.systemd.enableService ?? true,
+        startService: packageJson.snodeb.systemd.startService ?? true,
+        useNodeExecutor: packageJson.snodeb.systemd.useNodeExecutor ?? true,
       },
-      customScripts: packageJson.debConfig?.customScripts,
+      customScripts: packageJson.snodeb?.customScripts,
     };
 
     const archiver = new DebArchiver({

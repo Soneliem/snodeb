@@ -8,7 +8,7 @@ snodeb allows you to extend or override the default maintainer scripts (preinst,
 
 ```json
 {
-  "debConfig": {
+  "snodeb": {
     "customScripts": {
       "preinst": "debian/preinst.sh",    // Executed before installation
       "postinst": "debian/postinst.sh",  // Executed after installation
