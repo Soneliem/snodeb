@@ -2,9 +2,9 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { glob } from "glob";
 import { create } from "tar";
+import { createSystemdService } from "../services/systemd.js";
 import type { BuildConfig, BuildOptions } from "../types.js";
 import { createArEntry, hasScript } from "../utils.js";
-import { createSystemdService } from "../services/systemd.js";
 
 export class DebArchiver {
   private config: BuildConfig;
@@ -169,7 +169,10 @@ export class DebArchiver {
     ]);
 
     // Create final .deb file
-    const outputFile = path.join(this.outputDir, `${this.config.name}_${this.config.version}.deb`);
+    const outputFile = path.join(
+      this.outputDir,
+      `${this.config.name}_${this.config.version}_${this.config.architecture}.deb`,
+    );
     console.log("Writing final .deb package");
 
     // Create ar archive

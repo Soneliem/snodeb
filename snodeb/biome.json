@@ -1,26 +1,6 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.3/schema.json",
-  "formatter": {
-    "indentStyle": "space",
-    "lineWidth": 120
-  },
-  "organizeImports": { "enabled": true },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "suspicious": {
-        "noExplicitAny": "off"
-      },
-      "style": {
-        "noNonNullAssertion": "off",
-        "noParameterAssign": "off"
-      }
-    }
-  },
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
-  }
+  "$schema": "../node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": [
+    "../biome.json"
+  ]
 }

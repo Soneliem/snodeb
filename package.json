@@ -1,10 +1,17 @@
 {
   "name": "snodeb",
-  "workspaces": ["snodeb", "examples/*", "website"],
+  "workspaces": [
+    "snodeb",
+    "examples/*",
+    "website"
+  ],
   "private": true,
   "version": "0.0.0",
   "author": "Sonel",
   "license": "MIT",
   "homepage": "https://snodeb.sonel.dev",
-  "description": "Fast and simple Debian packaging for Node.js projects"
+  "description": "Fast and simple Debian packaging for Node.js projects",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
+  }
 }

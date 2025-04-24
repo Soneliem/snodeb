@@ -1,8 +1,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { templateDir } from "../constants.js";
-import { createMaintainerScript } from "./maintainer.js";
 import type { BuildConfig } from "../types.js";
+import { createMaintainerScript } from "./maintainer.js";
 
 export async function createSystemdService(config: BuildConfig, tempDir: string, sourceDir: string): Promise<void> {
   console.log(`Creating systemd service for ${config.name}...`);
