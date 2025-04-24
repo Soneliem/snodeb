@@ -1,4 +1,6 @@
-import type { PackageJson } from "type-fest";
+import path from "node:path";
+
+export const templateDir = path.join(__dirname, "../public/templates");
 
 export interface BuildConfig {
   name: string;
@@ -7,6 +9,7 @@ export interface BuildConfig {
   maintainer: string;
   architecture: string;
   depends: string[];
+  extends?: string;
   systemd: {
     user: string;
     group: string;
@@ -33,12 +36,17 @@ export interface BuildConfig {
   };
 }
 
-export type PackageJsonCustom = PackageJson & {
-  snodeb: BuildConfig;
-};
-
 export interface BuildOptions {
   sourceDir: string;
   outputDir: string;
   config: BuildConfig;
+}
+
+/**
+ * Helper function for defining snodeb configuration with type safety.
+ * @param config - The snodeb configuration object.
+ * @returns The configuration object.
+ */
+export function defineSnodebConfig(config: Partial<BuildConfig>): Partial<BuildConfig> {
+  return config;
 }

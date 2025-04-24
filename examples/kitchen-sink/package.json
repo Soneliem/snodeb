@@ -12,7 +12,7 @@
   },
   "snodeb": {
     "maintainer": "Example Maintainer <maintainer@example.com>",
-    "architecture": "all",
+    "extends": "custom.ts",
     "depends": [
       "nodejs"
     ],

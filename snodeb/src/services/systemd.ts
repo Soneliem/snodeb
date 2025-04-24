@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { templateDir } from "../constants.js";
+import { templateDir } from "../types.js";
 import type { BuildConfig } from "../types.js";
 import { createMaintainerScript } from "./maintainer.js";
 

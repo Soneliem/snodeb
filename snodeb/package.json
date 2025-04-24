@@ -2,15 +2,13 @@
   "name": "snodeb",
   "version": "1.0.0",
   "main": "dist/index.js",
-  "type": "module",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Soneliem/snodeb.git"
   },
   "homepage": "https://snodeb.sonel.dev",
-  "bin": {
-    "snodeb": "dist/index.js"
-  },
+  "bin": "dist/cli.js",
   "files": [
     "dist",
     "public"
@@ -28,24 +26,23 @@
   "description": "Fast and simple Debian packaging for Node.js projects",
   "tsup": {
     "entry": [
-      "src/index.ts"
+      "src/index.ts",
+      "src/cli.ts"
     ],
     "clean": true,
-    "format": [
-      "esm"
-    ],
     "outDir": "dist",
-    "publicDir": true
+    "publicDir": true,
+    "minify": true,
+    "dts": true
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
     "@types/tar": "^6.1.13",
-    "tsup": "^8.4.0",
-    "typescript": "^5.3.3"
-  },
-  "dependencies": {
+    "c12": "^3.0.3",
+    "defu": "^6.1.4",
     "glob": "^11.0.1",
     "tar": "^7.4.3",
-    "type-fest": "^4.37.0"
+    "tsup": "^8.4.0",
+    "typescript": "^5.3.3"
   }
 }
