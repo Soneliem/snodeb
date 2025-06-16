@@ -36,13 +36,13 @@
     "dts": true
   },
   "devDependencies": {
-    "@types/node": "^20.11.24",
+    "@types/node": "^24.0.1",
     "@types/tar": "^6.1.13",
-    "c12": "^3.0.3",
+    "c12": "^3.0.4",
     "defu": "^6.1.4",
-    "glob": "^11.0.1",
+    "glob": "^11.0.3",
     "tar": "^7.4.3",
-    "tsup": "^8.4.0",
-    "typescript": "^5.3.3"
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
   }
 }
