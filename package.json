@@ -12,6 +12,6 @@
   "homepage": "https://snodeb.sonel.dev",
   "description": "Fast and simple Debian packaging for Node.js projects",
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4"
+    "@biomejs/biome": "^2.0.6"
   }
 }

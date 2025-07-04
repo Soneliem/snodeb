@@ -5,14 +5,14 @@
       "fileMatch": ["package.json", "tsup.config.json"]
     }
   ],
-  "cSpell.words": [
-    "conffiles",
-    "defu",
-    "nodir",
-    "postinst",
-    "postrm",
-    "preinst",
-    "prerm",
-    "snodeb"
-  ]
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit",
+    "source.fixAll.biome": "explicit"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
 }

@@ -16,10 +16,8 @@
   "scripts": {
     "build": "tsup",
     "watch": "tsup --watch",
-    "lint": "biome check src/",
-    "lint:fix": "biome check src/ --fix",
-    "format": "biome format src/",
-    "format:fix": "biome format src/ --fix"
+    "lint": "biome check src/ --fix",
+    "format": "biome format src/ --fix"
   },
   "author": "Sonel",
   "license": "MIT",
@@ -36,9 +34,11 @@
     "dts": true
   },
   "devDependencies": {
+    "@types/cli-progress": "^3.11.6",
     "@types/node": "^24.0.1",
     "@types/tar": "^6.1.13",
     "c12": "^3.0.4",
+    "cli-progress": "^3.12.0",
     "defu": "^6.1.4",
     "glob": "^11.0.3",
     "tar": "^7.4.3",
