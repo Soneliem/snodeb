@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
+import { exec as execCallback } from "node:child_process";
 import path from "node:path";
+import { promisify } from "node:util";
 import { loadConfig } from "c12";
 import cliProgress from "cli-progress";
 import { createDefu } from "defu";
@@ -8,13 +10,15 @@ import { readPackageJSON } from "pkg-types";
 import { DebArchiver } from "./core/archiver.js";
 import type { BuildConfig, ResolvedBuildConfig } from "./types.js";
 
+const exec = promisify(execCallback);
+
 async function main() {
   try {
     const multibar = new cliProgress.MultiBar(
       {
         clearOnComplete: false,
         hideCursor: true,
-        format: " {bar} | {filename} | {value}/{total}",
+        format: " {bar} | {filename} | {value}/{total} | Duration: {duration_formatted}",
       },
       cliProgress.Presets.shades_grey,
     );
@@ -31,6 +35,8 @@ async function main() {
       maintainer: "Unknown",
       architecture: "all",
       depends: ["nodejs"],
+      purge: false,
+      unPurge: true,
       files: {
         include: packageJson.main ? [packageJson.main] : ["index.js"],
         exclude: [],
@@ -79,6 +85,17 @@ async function main() {
       throw new Error("Config must contain name and version fields");
     }
 
+    // npm purge if requested
+    if (config.purge) {
+      configBar.setTotal(5);
+      configBar.increment(1, { filename: "Running npm prune" });
+
+      const { stderr } = await exec("npm prune --omit=dev");
+      if (stderr) {
+        console.error(stderr);
+      }
+    }
+
     configBar.increment(1, { filename: "Config Loaded" });
     configBar.stop();
 
@@ -87,9 +104,26 @@ async function main() {
 
     const archiver = new DebArchiver(sourceDir, outputDir, config as ResolvedBuildConfig, multibar);
 
-    console.log(`Build for ${config.name} v${config.version}:`);
     const outputFile = await archiver.build();
+
+    // undo npm purge if requested
+    if (config.purge && config.unPurge) {
+      const unPurgeBar = multibar.create(2, 0, {
+        filename: "Undoing npm prune",
+      });
+      unPurgeBar.increment(1, { filename: "Running npm ci" });
+
+      const { stderr } = await exec("npm ci");
+      if (stderr) {
+        console.error(stderr);
+      }
+
+      unPurgeBar.increment(1, { filename: "npm ci completed" });
+      unPurgeBar.stop();
+    }
+
     multibar.stop();
+
     console.log(`Successfully created DEB package: ${outputFile}`);
     process.exit(0);
   } catch (error) {
