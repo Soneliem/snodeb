@@ -34,7 +34,7 @@ A good bundler like tsup should be able to bundle dev dependencies just fine and
 
 After building your app, you should remove development dependencies to keep the package size minimal. You have two options:
 
-#### Option 1: Use snodeb's built-in purge feature (recommended)
+#### Option 1: Use snodeb's built-in prune feature (recommended)
 
 This approach automatically runs `npm prune --omit=dev` before packaging and `npm ci` after packaging, keeping your development environment intact. See [Build Optimization](/docs/configuration#build-optimization) for more details.
 
@@ -56,14 +56,14 @@ npx snodeb
 
 Here's an example GitLab CI configuration that automates the build and packaging process:
 
-**Using snodeb's built-in purge feature:**
+**Using snodeb's built-in prune feature:**
 
 ```yml
 snodeb:
   script:
     - npm ci          # Install all dependencies
     - npm run bundle  # Build your application
-    - npx snodeb      # Create the .deb package (with purge: true in config)
+    - npx snodeb      # Create the .deb package (with prune: true in config)
   artifacts:
     paths:
       - ./deb/*.deb   # Store the resulting .deb file as an artifact

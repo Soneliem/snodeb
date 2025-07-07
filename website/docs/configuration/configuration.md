@@ -45,8 +45,8 @@ Here is a reference of all available configuration options in JSON format. Note 
   "depends": ["nodejs", "mosquitto"],             // Default: ["nodejs"]
 
   // Build optimization options
-  "purge": false,                                 // Default: false - Run npm prune --omit=dev before packaging
-  "unPurge": true,                                // Default: true - Run npm ci after packaging to restore dependencies
+  "prune": false,                                 // Default: false - Run npm prune --omit=dev before packaging
+  "unPrune": true,                                // Default: true - Run npm ci after packaging to restore dependencies
 
   // File management configuration
   "files": {
@@ -193,24 +193,24 @@ snodeb provides options to optimize the build process by managing dependencies d
 
 ### Dependency Purging
 
-The `purge` and `unPurge` options work together to reduce package size by temporarily removing development dependencies:
+The `prune` and `unPrune` options work together to reduce package size by temporarily removing development dependencies:
 
 ```typescript
 // snodeb.config.ts
 import { defineSnodebConfig } from 'snodeb';
 
 export default defineSnodebConfig({
-  purge: true,     // Remove dev dependencies before packaging
-  unPurge: true,   // Restore dependencies after packaging
+  prune: true,     // Remove dev dependencies before packaging
+  unPrune: true,   // Restore dependencies after packaging
   // ... other options
 });
 ```
 
 **How it works:**
 
-1. **`purge: true`** - Before creating the package, snodeb runs `npm prune --omit=dev` to remove all development dependencies from `node_modules`. This significantly reduces the package size since dev dependencies are not needed in production.
+1. **`prune: true`** - Before creating the package, snodeb runs `npm prune --omit=dev` to remove all development dependencies from `node_modules`. This significantly reduces the package size since dev dependencies are not needed in production.
 
-2. **`unPurge: true`** - After the package is created, snodeb runs `npm ci` to restore the complete dependency tree including development dependencies. This ensures your local development environment remains intact. NOTE: `purge` will also need to be enabled.
+2. **`unPrune: true`** - After the package is created, snodeb runs `npm ci` to restore the complete dependency tree including development dependencies. This ensures your local development environment remains intact. NOTE: `prune` will also need to be enabled.
 
 ## File Patterns
 

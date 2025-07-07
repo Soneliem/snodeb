@@ -37,8 +37,8 @@ export interface BuildConfig {
   architecture?: string;
   depends?: string[];
   extends?: string;
-  purge?: boolean;
-  unPurge?: boolean;
+  prune?: boolean;
+  unPrune?: boolean;
   systemd?: SystemD;
   files?: Files;
   customScripts?: CustomScripts;

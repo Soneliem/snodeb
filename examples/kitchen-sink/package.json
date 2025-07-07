@@ -16,8 +16,8 @@
     "depends": [
       "nodejs"
     ],
-    "purge": true,
-    "unPurge": true,
+    "prune": true,
+    "unPrune": true,
     "files": {
       "include": [
         "src/index.js",

@@ -35,8 +35,8 @@ async function main() {
       maintainer: "Unknown",
       architecture: "all",
       depends: ["nodejs"],
-      purge: false,
-      unPurge: true,
+      prune: false,
+      unPrune: true,
       files: {
         include: packageJson.main ? [packageJson.main] : ["index.js"],
         exclude: [],
@@ -85,8 +85,8 @@ async function main() {
       throw new Error("Config must contain name and version fields");
     }
 
-    // npm purge if requested
-    if (config.purge) {
+    // npm prune if requested
+    if (config.prune) {
       configBar.setTotal(5);
       configBar.increment(1, { filename: "Running npm prune" });
 
@@ -106,20 +106,20 @@ async function main() {
 
     const outputFile = await archiver.build();
 
-    // undo npm purge if requested
-    if (config.purge && config.unPurge) {
-      const unPurgeBar = multibar.create(2, 0, {
+    // undo npm prune if requested
+    if (config.prune && config.unPrune) {
+      const unPruneBar = multibar.create(2, 0, {
         filename: "Undoing npm prune",
       });
-      unPurgeBar.increment(1, { filename: "Running npm ci" });
+      unPruneBar.increment(1, { filename: "Running npm ci" });
 
       const { stderr } = await exec("npm ci");
       if (stderr) {
         console.error(stderr);
       }
 
-      unPurgeBar.increment(1, { filename: "npm ci completed" });
-      unPurgeBar.stop();
+      unPruneBar.increment(1, { filename: "npm ci completed" });
+      unPruneBar.stop();
     }
 
     multibar.stop();
