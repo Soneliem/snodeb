@@ -36,7 +36,7 @@ After building your app, you should remove development dependencies to keep the 
 
 #### Option 1: Use snodeb's built-in purge feature (recommended)
 
-This approach automatically runs `npm prune --omit=dev` before packaging and `npm ci` after packaging, keeping your development environment intact. See [Build Optimization](/docs/configuration/configuration#build-optimization) for more details.
+This approach automatically runs `npm prune --omit=dev` before packaging and `npm ci` after packaging, keeping your development environment intact. See [Build Optimization](/docs/configuration#build-optimization) for more details.
 
 #### Option 2: Manual dependency management
 

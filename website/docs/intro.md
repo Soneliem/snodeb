@@ -27,7 +27,3 @@ The tool provides comprehensive configuration options for:
 - Safe upgrading and uninstalling
 
 Whether you're deploying a simple Node.js application or a complex service that needs system integration, snodeb provides the tools and flexibility you need for Debian package creation.
-
-## Next Steps
-
-- [Get Started!](./getting-started)
