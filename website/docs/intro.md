@@ -11,6 +11,7 @@ snodeb (Sonel's Node Debian Builder) is a simple Node.js package for creating De
 - Pure JavaScript implementation (no host system dependencies)
 - Configurable file inclusion/exclusion
 - Systemd service generation
+- Build optimization with automatic dependency management
 
 ## Overview
 
@@ -22,6 +23,11 @@ The tool provides comprehensive configuration options for:
 - File management (inclusion/exclusion patterns)
 - Systemd service configuration (including auto-start and auto-enable)
 - Installation paths and dependencies
+- Build optimization (automatic dependency purging and restoration)
 - Safe upgrading and uninstalling
 
 Whether you're deploying a simple Node.js application or a complex service that needs system integration, snodeb provides the tools and flexibility you need for Debian package creation.
+
+## Next Steps
+
+- [Get Started!](./getting-started)

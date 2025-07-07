@@ -44,6 +44,10 @@ Here is a reference of all available configuration options in JSON format. Note 
   "architecture": "all",                          // Default: "all"
   "depends": ["nodejs", "mosquitto"],             // Default: ["nodejs"]
 
+  // Build optimization options
+  "purge": false,                                 // Default: false - Run npm prune --omit=dev before packaging
+  "unPurge": true,                                // Default: true - Run npm ci after packaging to restore dependencies
+
   // File management configuration
   "files": {
     // Files to include in the package
@@ -182,6 +186,31 @@ export default config;
 ```
 
 The `configInclude` and `configExclude` arrays supports glob patterns and follows the same pattern matching rules as `include` and `exclude`. All paths are relative to your project directory and will be automatically adjusted to their final installation paths in the package.
+
+## Build Optimization
+
+snodeb provides options to optimize the build process by managing dependencies during package creation:
+
+### Dependency Purging
+
+The `purge` and `unPurge` options work together to reduce package size by temporarily removing development dependencies:
+
+```typescript
+// snodeb.config.ts
+import { defineSnodebConfig } from 'snodeb';
+
+export default defineSnodebConfig({
+  purge: true,     // Remove dev dependencies before packaging
+  unPurge: true,   // Restore dependencies after packaging
+  // ... other options
+});
+```
+
+**How it works:**
+
+1. **`purge: true`** - Before creating the package, snodeb runs `npm prune --omit=dev` to remove all development dependencies from `node_modules`. This significantly reduces the package size since dev dependencies are not needed in production.
+
+2. **`unPurge: true`** - After the package is created, snodeb runs `npm ci` to restore the complete dependency tree including development dependencies. This ensures your local development environment remains intact. NOTE: `purge` will also need to be enabled.
 
 ## File Patterns
 
