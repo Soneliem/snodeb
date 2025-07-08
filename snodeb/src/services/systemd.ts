@@ -11,7 +11,7 @@ export async function createSystemdService(
   tempDir: string,
   sourceDir: string,
 ): Promise<void> {
-  const systemdBar = multibar.create(7, 0, { filename: "Systemd Service" });
+  const systemdBar = multibar.create(7, 0, { filename: "Systemd Service", status: "Starting..." });
 
   const templatePath = path.join(templateDir, "systemd.service");
   let serviceTemplate = await readFile(templatePath, "utf-8");

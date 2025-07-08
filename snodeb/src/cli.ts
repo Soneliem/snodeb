@@ -14,12 +14,13 @@ async function main() {
       {
         clearOnComplete: false,
         hideCursor: true,
-        format: " {bar} | {filename} | {value}/{total} | Duration: {duration_formatted}",
+        format:
+          " {bar} | {filename}: {status} | {value}/{total} | Duration: {duration_formatted} | ETA: {eta_formatted}",
       },
       cliProgress.Presets.shades_grey,
     );
 
-    const configBar = multibar.create(3, 0, { filename: "Configuration" });
+    const configBar = multibar.create(3, 0, { filename: "Configuration", status: "Starting..." });
 
     const packageJson = await readPackageJSON();
     configBar.increment(1, { status: "Read package.json" });

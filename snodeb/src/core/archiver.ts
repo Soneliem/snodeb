@@ -29,6 +29,7 @@ export class DebArchiver {
   private async createConffilesFile() {
     const conffilesBar = this.multibar.create(this.config.files.configInclude.length + 1, 0, {
       filename: "Conffiles",
+      status: "Starting...",
     });
     const installDir = path.join(this.tempDir, "install");
     const configFiles = [];
@@ -65,6 +66,7 @@ export class DebArchiver {
   private async createControlFile(): Promise<void> {
     const controlFileBar = this.multibar.create(3, 0, {
       filename: "Control File",
+      status: "Starting...",
     });
     controlFileBar.increment(1, { status: "Creating control file..." });
     const control = [
@@ -82,13 +84,14 @@ export class DebArchiver {
     controlFileBar.increment(1, { status: "Writing control file" });
     await writeFile(path.join(this.tempDir, "control"), `${control.join("\n")}\n\n`);
 
-    controlFileBar.increment(1, { status: "Wrote control file" });
+    controlFileBar.increment(1, { status: "Created control file" });
     controlFileBar.stop();
   }
 
   private async createDataArchive(): Promise<Buffer> {
     const dataArchiveBar = this.multibar.create(5, 0, {
       filename: "Data Archive",
+      status: "Starting...",
     });
     dataArchiveBar.increment(1, { status: "Creating install directories" });
     const dataPath = path.join(this.tempDir, "data.tar.gz");
@@ -99,9 +102,23 @@ export class DebArchiver {
       recursive: true,
     });
 
+    // Copy node_modules
+    if (this.config.files.prune) {
+      dataArchiveBar.setTotal(5);
+      dataArchiveBar.increment(1, { status: "Running npm prune" });
+
+      const { stderr } = await exec("npm prune --omit=dev");
+      if (stderr) {
+        console.error(stderr);
+      }
+    }
+
     // Expand glob patterns and copy files
     dataArchiveBar.increment(1, { status: "Copying files" });
-    const dataPatternsBar = this.multibar.create(this.config.files.include.length, 0, { filename: "Data Patterns" });
+    const dataPatternsBar = this.multibar.create(this.config.files.include.length, 0, {
+      filename: "Data Patterns",
+      status: "Starting...",
+    });
     for (const pattern of this.config.files.include) {
       const matches = await glob(pattern, {
         cwd: this.sourceDir,
@@ -113,6 +130,7 @@ export class DebArchiver {
 
       const dataFilesBar = this.multibar.create(matches.length, 0, {
         filename: "Data Files",
+        status: "Starting...",
       });
       for (const file of matches) {
         dataFilesBar.increment(1, { status: `Copying ${file}` });
@@ -134,17 +152,6 @@ export class DebArchiver {
       path.join(systemdPath, `${this.config.name}.service`),
       await readFile(path.join(this.tempDir, `${this.config.name}.service`)),
     );
-
-    // Copy node_modules
-    if (this.config.files.prune) {
-      dataArchiveBar.setTotal(5);
-      dataArchiveBar.increment(1, { status: "Running npm prune" });
-
-      const { stderr } = await exec("npm prune --omit=dev");
-      if (stderr) {
-        console.error(stderr);
-      }
-    }
 
     dataArchiveBar.increment(1, { status: "Creating data archive tar" });
 
@@ -181,6 +188,7 @@ export class DebArchiver {
   private async createControlArchive(): Promise<Buffer> {
     const controlArchiveBar = this.multibar.create(1, 0, {
       filename: "Control Archive",
+      status: "Starting...",
     });
     const controlPath = path.join(this.tempDir, "control.tar.gz");
 
@@ -215,6 +223,7 @@ export class DebArchiver {
   private async createDebianBinaryFile(): Promise<Buffer> {
     const debianBinaryBar = this.multibar.create(1, 0, {
       filename: "Debian-binary",
+      status: "Starting...",
     });
     const debianBinaryPath = path.join(this.tempDir, "debian-binary");
     await writeFile(debianBinaryPath, "2.0\n");
@@ -226,6 +235,7 @@ export class DebArchiver {
   public async build(): Promise<string> {
     const buildBar = this.multibar.create(6, 0, {
       filename: "Building Package",
+      status: "Starting...",
     });
 
     // Prepare directories
