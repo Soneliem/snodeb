@@ -202,6 +202,9 @@ export default defineSnodebConfig({
   files: {
     prune: true,     // Remove dev dependencies before packaging
     unPrune: true,   // Restore dependencies after packaging
+  },
+  files: {
+    include: ["dist/YOURFILES.js", "node_modules/**/*"], // Ensure node_modules are added to your array
   }
 });
 ```

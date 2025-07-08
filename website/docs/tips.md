@@ -30,7 +30,7 @@ Understanding how to handle dependencies is crucial for creating efficient .deb 
   - Need dynamic loading capabilities
   - Require access to their own assets or resources at runtime
 
-A good bundler like tsup should be able to bundle dev dependencies just fine and tree-shake where possible.
+A good bundler like tsup should be able to bundle dev dependencies just fine and tree-shake where possible. Ensure you add `"node_modules/**/*"` to your `files.include` array ensure the dependencies are copied over.
 
 After building your app, you should remove development dependencies to keep the package size minimal. You have two options:
 
