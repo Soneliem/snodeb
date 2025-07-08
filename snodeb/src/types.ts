@@ -19,6 +19,8 @@ interface Files {
   installPath?: string;
   configInclude?: string[];
   configExclude?: string[];
+  prune?: boolean;
+  unPrune?: boolean;
 }
 
 interface CustomScripts {
@@ -37,8 +39,6 @@ export interface BuildConfig {
   architecture?: string;
   depends?: string[];
   extends?: string;
-  prune?: boolean;
-  unPrune?: boolean;
   systemd?: SystemD;
   files?: Files;
   customScripts?: CustomScripts;

@@ -44,10 +44,6 @@ Here is a reference of all available configuration options in JSON format. Note 
   "architecture": "all",                          // Default: "all"
   "depends": ["nodejs", "mosquitto"],             // Default: ["nodejs"]
 
-  // Build optimization options
-  "prune": false,                                 // Default: false - Run npm prune --omit=dev before packaging
-  "unPrune": true,                                // Default: true - Run npm ci after packaging to restore dependencies
-
   // File management configuration
   "files": {
     // Files to include in the package
@@ -61,13 +57,16 @@ Here is a reference of all available configuration options in JSON format. Note 
     // Where to install the files on the target system
     "installPath": "/opt/your-app",               // Default: "/usr/share/${name}"
     // Files to mark as configuration files (conffiles)
-    "configInclude": [                       // Default: []
+    "configInclude": [                            // Default: []
       "config/*.json"                             // Supports glob patterns
     ],
     // Files to exclude from configuration files (conffiles)
-    "configExclude": [                       // Default: []
+    "configExclude": [                            // Default: []
       "config/*.json"                             // Supports glob patterns
-    ]
+    ],
+    // Build optimization options
+    "prune": false,                               // Default: false - Run npm prune --omit=dev before packaging
+    "unPrune": true,                              // Default: true - Run npm ci after packaging to restore dependencies
   },
 
   // Systemd service configuration
@@ -200,9 +199,10 @@ The `prune` and `unPrune` options work together to reduce package size by tempor
 import { defineSnodebConfig } from 'snodeb';
 
 export default defineSnodebConfig({
-  prune: true,     // Remove dev dependencies before packaging
-  unPrune: true,   // Restore dependencies after packaging
-  // ... other options
+  files: {
+    prune: true,     // Remove dev dependencies before packaging
+    unPrune: true,   // Restore dependencies after packaging
+  }
 });
 ```
 
@@ -210,7 +210,7 @@ export default defineSnodebConfig({
 
 1. **`prune: true`** - Before creating the package, snodeb runs `npm prune --omit=dev` to remove all development dependencies from `node_modules`. This significantly reduces the package size since dev dependencies are not needed in production.
 
-2. **`unPrune: true`** - After the package is created, snodeb runs `npm ci` to restore the complete dependency tree including development dependencies. This ensures your local development environment remains intact. NOTE: `prune` will also need to be enabled.
+2. **`unPrune: true`** - After the package is created, snodeb runs `npm ci` to restore the complete dependency tree including development dependencies. This ensures your local development environment remains intact. NOTE: `prune` also needs to be enabled for this option to do anything.
 
 ## File Patterns
 

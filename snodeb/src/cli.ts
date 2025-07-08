@@ -1,16 +1,12 @@
 #!/usr/bin/env node
 
-import { exec as execCallback } from "node:child_process";
 import path from "node:path";
-import { promisify } from "node:util";
 import { loadConfig } from "c12";
 import cliProgress from "cli-progress";
 import { createDefu } from "defu";
 import { readPackageJSON } from "pkg-types";
 import { DebArchiver } from "./core/archiver.js";
 import type { BuildConfig, ResolvedBuildConfig } from "./types.js";
-
-const exec = promisify(execCallback);
 
 async function main() {
   try {
@@ -23,10 +19,10 @@ async function main() {
       cliProgress.Presets.shades_grey,
     );
 
-    const configBar = multibar.create(4, 0, { filename: "Loading Config" });
+    const configBar = multibar.create(3, 0, { filename: "Configuration" });
 
-    configBar.increment(1, { filename: "Reading package.json" });
     const packageJson = await readPackageJSON();
+    configBar.increment(1, { status: "Read package.json" });
 
     const defaultConfig: Partial<BuildConfig> = {
       name: packageJson.name,
@@ -35,14 +31,14 @@ async function main() {
       maintainer: "Unknown",
       architecture: "all",
       depends: ["nodejs"],
-      prune: false,
-      unPrune: true,
       files: {
         include: packageJson.main ? [packageJson.main] : ["index.js"],
         exclude: [],
         configInclude: [],
         configExclude: [],
         installPath: `/usr/share/${packageJson.name}`,
+        prune: false,
+        unPrune: true,
       },
       systemd: {
         user: "root",
@@ -55,8 +51,6 @@ async function main() {
         useNodeExecutor: true,
       },
     };
-
-    configBar.increment(1, { filename: "Merging Config" });
 
     // Create a custom merger using defu that overrides arrays
     const customDefu = createDefu((obj, key, value) => {
@@ -77,26 +71,13 @@ async function main() {
           .filter((s): s is Partial<BuildConfig> => s != null)
           .reduce((acc, source) => customDefu(acc, source), {} as Partial<BuildConfig>),
     });
-
-    configBar.increment(1, { filename: "Validating Config" });
+    configBar.increment(1, { status: "Loaded configuration" });
 
     // Validate required fields
     if (!config.name || !config.version) {
       throw new Error("Config must contain name and version fields");
     }
-
-    // npm prune if requested
-    if (config.prune) {
-      configBar.setTotal(5);
-      configBar.increment(1, { filename: "Running npm prune" });
-
-      const { stderr } = await exec("npm prune --omit=dev");
-      if (stderr) {
-        console.error(stderr);
-      }
-    }
-
-    configBar.increment(1, { filename: "Config Loaded" });
+    configBar.increment(1, { status: "Validated configuration" });
     configBar.stop();
 
     const sourceDir = process.cwd();
@@ -105,22 +86,6 @@ async function main() {
     const archiver = new DebArchiver(sourceDir, outputDir, config as ResolvedBuildConfig, multibar);
 
     const outputFile = await archiver.build();
-
-    // undo npm prune if requested
-    if (config.prune && config.unPrune) {
-      const unPruneBar = multibar.create(2, 0, {
-        filename: "Undoing npm prune",
-      });
-      unPruneBar.increment(1, { filename: "Running npm ci" });
-
-      const { stderr } = await exec("npm ci");
-      if (stderr) {
-        console.error(stderr);
-      }
-
-      unPruneBar.increment(1, { filename: "npm ci completed" });
-      unPruneBar.stop();
-    }
 
     multibar.stop();
 

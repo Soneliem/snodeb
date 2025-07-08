@@ -16,18 +16,19 @@
     "depends": [
       "nodejs"
     ],
-    "prune": true,
-    "unPrune": true,
     "files": {
       "include": [
         "src/index.js",
         "env",
-        "src/**/*"
+        "src/**/*",
+        "node+modules/**/*"
       ],
       "exclude": [
         "**/*.test.js"
       ],
-      "installPath": "/usr/share/snodeb-example"
+      "installPath": "/usr/share/snodeb-example",
+      "prune": true,
+      "unPrune": true
     },
     "systemd": {
       "enable": true,
