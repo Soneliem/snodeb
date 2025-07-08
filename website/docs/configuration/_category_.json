@@ -1,8 +1,8 @@
 {
-  "label": "Configuration",
-  "position": 3,
-  "link": {
-    "type": "generated-index",
-    "description": "Learn about all configuration options available in snodeb and how to customize your package building process."
-  }
+	"label": "Configuration",
+	"position": 3,
+	"link": {
+		"type": "generated-index",
+		"description": "Learn about all configuration options available in snodeb and how to customize your package building process."
+	}
 }
